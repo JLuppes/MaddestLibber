@@ -16,33 +16,33 @@ def home():
 
 class NewTagForm(FlaskForm):
     name = StringField('Tag Name', validators=[DataRequired()])
-    description = StringField('Tag Description', validators=[DataRequired()])
+    description = StringField('Tag Description')
 
+def makeNewTag(tagName='', tagDescription=''):
+    try:
+        new_tag = Tag(
+            name=tagName,
+            description=tagDescription
+        )
+        db.session.add(new_tag)
+        db.session.commit()
+    except ValueError as e:
+        raise ValueError("Error adding new tag: " + e) 
 
 @create.route('/tag', methods=['GET', 'POST'])
 def newTag():
-
     newTagForm = NewTagForm()
-
     if newTagForm.validate_on_submit():
-
         try:
-            new_tag = Tag(
-                name=request.form.get('name'),
-                description=request.form.get('description')
-            )
-            db.session.add(new_tag)
-            db.session.commit()
-
+            makeNewTag(
+                tagName=request.form.get('name'),
+                tagDescription=request.form.get('description'))
             flash("Tag Created!", "success")
-
-            return redirect(url_for('main.home'))
-
+            return redirect(url_for('create.newTag', newTagForm=newTagForm))
         except ValueError as e:
             error = "Error with new tag form!"
             return render_template('create_tag.html', newTagForm=newTagForm, error=error)
     elif newTagForm.is_submitted():
         error = "Form Validation Failed!"
         return render_template('create_tag.html', newTagForm=newTagForm, error=error)
-
     return render_template('create_tag.html', newTagForm=newTagForm)

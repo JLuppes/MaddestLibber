@@ -5,3 +5,7 @@ h1{
 .error {
     color: red;
 }
+
+.flashes {
+    list-style: none;
+}

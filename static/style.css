@@ -1,11 +1,40 @@
-h1{
-    color: green;
+body,
+header {
+  background-color: darkslategray;
+  color: rgb(49, 99, 0);
+}
+
+h1 {
+  color: green;
+}
+
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .error {
-    color: red;
+  color: red;
 }
 
 .flashes {
-    list-style: none;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+}
+
+form div {
+  margin: 10px 0;
+}
+
+label {
+  display: inline-block;
+  width: 120px;
+}
+
+form {
+  border: 2px solid green;
+  border-radius: 10px;
+  background-color: darkgoldenrod;
 }

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{super()}} - Create Tag{% endblock%}
+{% block content %}
+
+<h2>Create a Tag!</h2>
+
+<form method="POST" action="{{url_for('create.newTag')}}">
+    {{ newTagForm.csrf_token }}
+    {{ newTagForm.name.label }}: {{ newTagForm.name(size=20) }}
+    <br>
+    {{ newTagForm.description.label }}: {{ newTagForm.description(size=40) }}
+    <input type="submit" value="Go">
+</form>
+
+{% endblock %}

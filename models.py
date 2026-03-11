@@ -87,8 +87,8 @@ class Answer(db.Model):
         'blanktype.id'), nullable=False)
     text = db.Column(db.String(100))
 
-    completedstories = db.relationship(
-        "Completed_Story", backref="answer", lazy=True)
+    completedanswers = db.relationship(
+        "Completed_Answer", backref="answer", lazy=True)
     __tablename__ = "answer"
 
 

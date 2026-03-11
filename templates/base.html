@@ -18,11 +18,11 @@
 
 <body>
     {# Header #}
-    <header>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        {# Include our Nav Bar #}
+        {%block navbar%}{% include 'components/navbar.html'%}{%endblock%}
         {%block header%}
-            {# Include our Nav Bar #}
-            {%block navbar%}{% include 'components/navbar.html'%}{%endblock%}
-
             {# Display error messages (if any) #}
             {% if error %}
             <p class="error">{{error}}</p>
@@ -39,7 +39,8 @@
             {% endif %}
             {% endwith %}
         {%endblock%}
-    </header>
+        </header>
+    </div>
 
     <h1>Mad Libs!</h1>
 

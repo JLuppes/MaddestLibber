@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from models import db
+from models import db, Tag, Story_Tag, Completed_Answer, RequestSet, Story, CompletedStory, Answer, RequestSet_Blank, BlankType
 from blueprints.main import main_controller
 from blueprints.create import create_controller
 from blueprints.play import play_controller
@@ -14,7 +14,7 @@ app.config.from_object(Config)
 
 app.secret_key = app.config['SECRET_KEY']
 
-admin = Admin(app, name='maddestlibber')
+admin = Admin(app, name='MaddestLibber Admin')
 
 # Initializes the app
 db.init_app(app)
@@ -26,6 +26,16 @@ with app.app_context():
 app.register_blueprint(main_controller.main)
 app.register_blueprint(create_controller.create)
 app.register_blueprint(play_controller.play)
+
+admin.add_view(ModelView(Tag, db.session))
+admin.add_view(ModelView(Story_Tag, db.session))
+admin.add_view(ModelView(Completed_Answer, db.session))
+admin.add_view(ModelView(RequestSet, db.session))
+admin.add_view(ModelView(Story, db.session))
+admin.add_view(ModelView(CompletedStory, db.session))
+admin.add_view(ModelView(Answer, db.session))
+admin.add_view(ModelView(RequestSet_Blank, db.session))
+admin.add_view(ModelView(BlankType, db.session))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -8,7 +8,7 @@ class NewStoryForm(FlaskForm):
     name = StringField('Story Name', validators=[DataRequired()])
     description = StringField('Story Description')
     text = TextAreaField('Story Text', validators=[DataRequired()])
-    tags = HiddenField("Tags")
+    tagList = HiddenField("Tags")
 
 
 class NewTagForm(FlaskForm):

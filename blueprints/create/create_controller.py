@@ -48,8 +48,12 @@ def makeStoryTagConnection(story, tag):
             tag_id=tag.id,
             story_id=story.id
         )
+        thisTag = Tag.query.filter_by(id=tag.id).first()
+        thisStory = Tag.query.filter_by(id=story.id).first()
+        db.session.add(new_story_tag)
+        db.session.commit()
         flash(
-            f"Added tag {new_story_tag.name} to story {story.name}!", 'success')
+            f"Added tag {thisTag.name} to story {thisStory.name}!", 'success')
     except ValueError as e:
         error = "Error adding story-tag connection: " + e
         raise ValueError(error)
@@ -69,19 +73,16 @@ def newStory():
             error = f"Error adding new story after validation: {e}"
             flash(error, 'error')
 
-        for thisTag in newStoryForm.tags.data:
+        list_of_tags = newStoryForm.tagList.data.split(',')
+        for thisTag in list_of_tags:
             try:
-                makeStoryTagConnection(new_story, thisTag)
+                addingTag = db.session.query(Tag).filter_by(id=thisTag).first()
+                makeStoryTagConnection(new_story, addingTag)
             except Exception as e:
-                error = f"Error adding story connection for tag {thisTag.name}: {e}"
+                error = f"Error adding story connection for tag {thisTag}: {e}"
                 flash(error, 'error')
 
         return redirect(url_for('play.home'))
-
-    # elif NewStoryForm.is_submitted():
-    #     error = "Error submitting story! Please try again."
-    #     return render_template('create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags, error=error)
-        
     else:
         return render_template('create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags)
 

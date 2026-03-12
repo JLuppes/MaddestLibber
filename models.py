@@ -2,17 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-# class Review(db.Model):
-#     """Review model."""
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String(100))
-#     director = db.Column(db.String(100))
-#     review = db.Column(db.Text)
-#     user = db.Column(db.String(100))
-#     movie_id = db.Column(db.Integer, db.ForeignKey('movie_data.id'), nullable=False)
-#     __tablename__ = "review"
-
-
 class Tag(db.Model):
     """Tag model."""
     id = db.Column(db.Integer, primary_key=True)

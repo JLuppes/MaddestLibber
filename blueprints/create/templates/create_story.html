@@ -1,0 +1,98 @@
+{% extends 'base.html' %} {% block title %}{{super()}} - Create Story{%
+endblock%} {% block content %}
+
+<form method="POST" action="{{url_for('create.newStory')}}">
+  <h2>Create a Story!</h2>
+  {{ newStoryForm.csrf_token }} {{ newStoryForm.name.label }}: {{
+  newStoryForm.name(size=20) }}
+  <br />
+  {{ newStoryForm.description.label }}: {{ newStoryForm.description(size=20) }}
+  <br />
+  {{ newStoryForm.text.label}}: {{newStoryForm.text(size=100)}}
+  <br />
+
+  <h3>Tags</h3>
+  <ul id="storyTagList"></ul>
+
+  <input type="hidden" id="tagList" name="tagList" value="" />
+
+  <input class="submit" type="submit" value="Submit Story" />
+</form>
+
+<form id="tagAdditionForm" action="#">
+<h3>Add Tags:</h3>
+<p>(Ctrl+Click for multiples)</p>
+  <select name="tags" id="tags" multiple>
+    {% for tag in tags %}
+    <option id="tagOption-{{tag.id}}" value="{{tag.id}}">
+      <span>{{tag.name}}</span>: <span>{{tag.description}}</span>
+    </option>
+    {% endfor %}
+  </select>
+  <br />
+  <input type="submit" onclick="handleNewTagForm(event)" value="Add Tag" />
+</form>
+{% endblock %} {% block scripts %} {{super()}}
+<script>
+  const storyTagList = document.getElementById("storyTagList");
+  const addTagForm = document.getElementById("tagAdditionForm");
+  const tagSelectionDropdown = document.getElementById("tags");
+  const storyFormTagList = document.getElementById("tagList");
+
+  let listOfCurrentTags = [];
+
+  function handleNewTagForm(e) {
+    e.preventDefault();
+
+    let collection = tagSelectionDropdown.selectedOptions;
+    console.log(collection);
+
+    let removeList = [];
+    for (let i = 0; i < collection.length; i++) {
+      console.log(collection[i].id);
+      // listOfCurrentTags.push(collection[i].id)
+
+      let tagId = collection[i].id.substring(10);
+
+      if (tagId) {
+        newTag = document.createElement("li");
+        newTag.id = `storyTag-${tagId}`;
+        newTag.innerHTML = `<a id=\"removeTag-${tagId}\" aria-label=\"remove-tag\" href=\"\" onclick=\"removeTag(event)\"">X</a> - <span>${collection[i].text}</span>`;
+        storyTagList.appendChild(newTag);
+
+        listOfCurrentTags.push(tagId);
+        storyFormTagList.value = listOfCurrentTags;
+      }
+      removeList.push(collection[i]);
+    }
+    for (let i = 0; i < removeList.length; i++) {
+      let tagId = removeList[i].id.substring(10);
+      const selectedTagOption = document.getElementById(`tagOption-${tagId}`);
+      tagSelectionDropdown.removeChild(selectedTagOption);
+    }
+  }
+
+  function removeTag(e) {
+    e.preventDefault();
+
+    const tagInQuestionId = e.srcElement.id.substring(10);
+    const elementToRemove = document.getElementById(
+      `storyTag-${tagInQuestionId}`,
+    );
+    const tagToReAdd = document.createElement("option");
+
+    tagToReAdd.id = `tagOption-${tagInQuestionId}`;
+    tagToReAdd.value = tagInQuestionId;
+    tagToReAdd.innerHTML = `${elementToRemove.children[1].innerText}`;
+    tagSelectionDropdown.appendChild(tagToReAdd);
+
+    const indexOfOldTag = listOfCurrentTags.indexOf(tagInQuestionId);
+    if (indexOfOldTag > -1) {
+      listOfCurrentTags.splice(indexOfOldTag, 1);
+    }
+    storyFormTagList.value = listOfCurrentTags;
+    storyTagList.removeChild(elementToRemove);
+  }
+</script>
+
+{% endblock %}

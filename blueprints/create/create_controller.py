@@ -12,16 +12,16 @@ def home():
 
 
 def makeNewStory(storyName='', storyDescription='', storyText=''):
-    
+
     blank_start = '~['
     blank_end = ']~'
     sep_char = '|'
-    
+
     # start_positions = [i for i in range(len(storyText)) if storyText.startswith(blank_start, i)]
     # end_positions = [i for i in range(len(storyText)) if storyText.startswith(blank_end, i)]
-    
+
     blanks = []
-    
+
     start = 0
     while True:
         start = storyText.find(blank_start, start)
@@ -30,8 +30,8 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
             break
         blank_text = storyText[(start+len(blank_start)):end]
         sep_pos = blank_text.find(sep_char)
-        blank_name=blank_text[:sep_pos].strip()
-        blank_desc=blank_text[sep_pos+len(sep_char):].strip()
+        blank_name = blank_text[:sep_pos].strip()
+        blank_desc = blank_text[sep_pos+len(sep_char):].strip()
         blanks.append((blank_name, blank_desc))
         start += len(blank_start+blank_end+blank_text)
 
@@ -47,13 +47,13 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         db.session.rollback()
         error = f"Error adding story to database: {e}"
         raise ValueError(error)
-    
+
     pos_counter = 0
     for this_blank in blanks:
         try:
             new_blank = Blank(
-                name = this_blank[0],
-                hint = this_blank[1]
+                name=this_blank[0],
+                hint=this_blank[1]
             )
             db.session.add(new_blank)
             db.session.commit()
@@ -63,9 +63,9 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
             flash(error, 'error')
         try:
             new_story_blank = Story_Blank(
-                story_id = new_story.id,
-                blank_id = new_blank.id,
-                position = pos_counter
+                story_id=new_story.id,
+                blank_id=new_blank.id,
+                position=pos_counter
             )
             db.session.add(new_story_blank)
             db.session.commit()
@@ -74,9 +74,9 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
             db.session.rollback()
             error = "Error during story-blank connection: " + e
             raise ValueError(error)
-    
+
     return new_story
-    
+
 
 def makeNewTag(tag_name='', tag_description=''):
     try:
@@ -128,12 +128,13 @@ def newStory():
         for thisTag in list_of_tags:
             if len(thisTag) > 0:
                 try:
-                    addingTag = db.session.query(Tag).filter_by(id=thisTag).first()
+                    addingTag = db.session.query(
+                        Tag).filter_by(id=thisTag).first()
                     makeStoryTagConnection(new_story, addingTag)
                 except Exception as e:
                     error = f"Error adding story connection for tag {thisTag}: {e}"
                     flash(error, 'error')
-                    
+
         flash("Story added!", 'success')
 
         return redirect(url_for('play.home'))

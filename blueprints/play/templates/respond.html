@@ -1,0 +1,24 @@
+{%extends 'base.html'%} {% block content %}
+
+<h4>Story: {{storyName}}</h4>
+<h4>Description: {{storyDescription}}</h4>
+
+<h3>Enter these responses:</h3>
+
+
+<form action="" method="POST">
+  <ul>
+    {% for i, thisRequest in enumerate(blanks) %}
+    <li>
+        <label for="response-{{i}}">{{thisRequest.name}}</label>
+        <p>Hint: {{thisRequest.hint}}</p>
+        <input name="response-{{i}}" id="response-{{i}}" type="text">
+    </li>
+    <br>
+    {% endfor %}
+  </ul>
+
+  <input type="submit" value="Submit Responses" />
+</form>
+
+{%endblock%}

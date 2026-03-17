@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>List of stories:</h2>
+<div class="storyListContainer">
+    <table class="storyList">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Story Name</th>
+                <th>Description</th>
+                <th>Tags</th>
+                <th>Play</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for thisStory in stories %}
+            <tr>
+                <td>{{thisStory[0].id}}</td>
+                <td>{{thisStory[0].name}}</td>
+                <td>{{thisStory[0].description}}</td>
+                <td>{% for thisTag in thisStory[1] %}{{thisTag.name}}{%endfor%}</td>
+                <td><a href="{{url_for('play.respond', storyId=thisStory[0].id)}}">Play</a></td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

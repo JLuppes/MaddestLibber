@@ -75,12 +75,15 @@ def newStory():
 
         list_of_tags = newStoryForm.tagList.data.split(',')
         for thisTag in list_of_tags:
-            try:
-                addingTag = db.session.query(Tag).filter_by(id=thisTag).first()
-                makeStoryTagConnection(new_story, addingTag)
-            except Exception as e:
-                error = f"Error adding story connection for tag {thisTag}: {e}"
-                flash(error, 'error')
+            if len(thisTag) > 0:
+                try:
+                    addingTag = db.session.query(Tag).filter_by(id=thisTag).first()
+                    makeStoryTagConnection(new_story, addingTag)
+                except Exception as e:
+                    error = f"Error adding story connection for tag {thisTag}: {e}"
+                    flash(error, 'error')
+                    
+        flash("Story added!", 'success')
 
         return redirect(url_for('play.home'))
     else:

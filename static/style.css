@@ -38,3 +38,27 @@ form {
   border-radius: 10px;
   background-color: darkgoldenrod;
 }
+
+.storyListContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.storyList {
+  border: 2px dashed blue;
+  border-radius: 10px;
+  background-color: cadetblue;
+  min-width: 50em;
+}
+
+.storyList tr {
+  border: 1px dashed green;
+  border-radius: 2px;
+  background-color: coral;
+}
+
+.storyList td{
+  min-width: 5em;
+  width: auto;
+}

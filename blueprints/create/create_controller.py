@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import db, Tag, Story, Story_Tag
+from models import db, Tag, Story, Story_Tag, Story_Blank, Blank
 from blueprints.create.create_forms import NewStoryForm, NewTagForm
 
 create = Blueprint('create', __name__, url_prefix='/create',
@@ -12,6 +12,29 @@ def home():
 
 
 def makeNewStory(storyName='', storyDescription='', storyText=''):
+    
+    blank_start = '~['
+    blank_end = ']~'
+    sep_char = '|'
+    
+    # start_positions = [i for i in range(len(storyText)) if storyText.startswith(blank_start, i)]
+    # end_positions = [i for i in range(len(storyText)) if storyText.startswith(blank_end, i)]
+    
+    blanks = []
+    
+    start = 0
+    while True:
+        start = storyText.find(blank_start, start)
+        end = storyText.find(blank_end, start)
+        if start == -1:
+            break
+        blank_text = storyText[(start+len(blank_start)):end]
+        sep_pos = blank_text.find(sep_char)
+        blank_name=blank_text[:sep_pos].strip()
+        blank_desc=blank_text[sep_pos+len(sep_char):].strip()
+        blanks.append((blank_name, blank_desc))
+        start += len(blank_start+blank_end+blank_text)
+
     try:
         new_story = Story(
             name=storyName,
@@ -20,12 +43,40 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         )
         db.session.add(new_story)
         db.session.commit()
-        return new_story
     except ValueError as e:
         db.session.rollback()
         error = f"Error adding story to database: {e}"
         raise ValueError(error)
-
+    
+    pos_counter = 0
+    for this_blank in blanks:
+        try:
+            new_blank = Blank(
+                name = this_blank[0],
+                hint = this_blank[1]
+            )
+            db.session.add(new_blank)
+            db.session.commit()
+        except ValueError as e:
+            db.session.rollback()
+            error = "Error adding new blank: " + e
+            flash(error, 'error')
+        try:
+            new_story_blank = Story_Blank(
+                story_id = new_story.id,
+                blank_id = new_blank.id,
+                position = pos_counter
+            )
+            db.session.add(new_story_blank)
+            db.session.commit()
+            pos_counter += 1
+        except ValueError as e:
+            db.session.rollback()
+            error = "Error during story-blank connection: " + e
+            raise ValueError(error)
+    
+    return new_story
+    
 
 def makeNewTag(tag_name='', tag_description=''):
     try:
@@ -62,7 +113,7 @@ def makeStoryTagConnection(story, tag):
 @create.route('/story', methods=['GET', 'POST'])
 def newStory():
     newStoryForm = NewStoryForm()
-    newTagForm = NewTagForm
+    newTagForm = NewTagForm()
     tags = Tag.query.all()
 
     if newStoryForm.validate_on_submit():

@@ -1,9 +1,10 @@
-{% extends 'base.html' %} {% block title %}{{super()}} - Create Story{%
-endblock%} {% block content %}
+{% extends 'base.html' %} 
+{% block title %}{{super()}} - Create Story{%endblock%} 
+{% block content %}
 
 <form method="POST" action="{{url_for('create.newStory')}}">
   <h2>Create a Story!</h2>
-  {{ newStoryForm.csrf_token }} 
+  {{ newStoryForm.csrf_token }}
   {{ newStoryForm.name.label }}: {{newStoryForm.name(size=20) }}
   <br />
   {{ newStoryForm.description.label }}: {{ newStoryForm.description(size=20) }}
@@ -32,9 +33,9 @@ endblock%} {% block content %}
   <br />
   <input type="submit" onclick="handleNewTagForm(event)" value="Add Tag" />
 </form>
-{% endblock %} 
+{% endblock %}
 
-{% block scripts %} 
+{% block scripts %}
 {{super()}}
 <script>
   const storyTagList = document.getElementById("storyTagList");

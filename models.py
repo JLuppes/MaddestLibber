@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class Tag(db.Model):
     """Tag model."""
     id = db.Column(db.Integer, primary_key=True)
@@ -21,29 +22,6 @@ class Story_Tag(db.Model):
     __tablename__ = "story_tag"
 
 
-class Completed_Answer(db.Model):
-    """Completed Story to Answer relationship model."""
-    id = db.Column(db.Integer, primary_key=True)
-    completedstory_id = db.Column(db.Integer, db.ForeignKey(
-        'completedstory.id'), nullable=False)
-    answer_id = db.Column(db.Integer, db.ForeignKey(
-        'answer.id'), nullable=False)
-    rank = db.Column(db.Integer)
-    __tablename__ = "completed_answer"
-
-
-class RequestSet(db.Model):
-    """Request Set model."""
-    id = db.Column(db.Integer, primary_key=True)
-    story_id = db.Column(db.Integer, db.ForeignKey('story.id'), nullable=False)
-    description = db.Column(db.String(1000))
-
-    answers = db.relationship("Answer", backref="requestset", lazy=True)
-    requestset_blanks = db.relationship(
-        "RequestSet_Blank", backref="requestset", lazy=True)
-    __tablename__ = "requestset"
-
-
 class Story(db.Model):
     """Story model."""
     id = db.Column(db.Integer, primary_key=True)
@@ -52,56 +30,45 @@ class Story(db.Model):
     text = db.Column(db.String(10000))
 
     story_tags = db.relationship("Story_Tag", backref="story", lazy=True)
-    completedstories = db.relationship(
-        "CompletedStory", backref="story", lazy=True)
+    story_blanks = db.relationship("Story_Blank", backref="story", lazy=True)
+    responsesets = db.relationship("ResponseSet", backref="story", lazy=True)
     __tablename__ = "story"
 
 
-class CompletedStory(db.Model):
-    """Completed Story model."""
+class Story_Blank(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     story_id = db.Column(db.Integer, db.ForeignKey('story.id'), nullable=False)
+    blank_id = db.Column(db.Integer, db.ForeignKey('blank.id'), nullable=False)
+    position = db.Column(db.Integer)
 
-    completedanswers = db.relationship(
-        "Completed_Answer", backref="completedstory", lazy=True)
-    __tablename__ = "completedstory"
+    __tablename__ = "story_blank"
 
 
-class Answer(db.Model):
-    """Answer model."""
+class Response (db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    requestset_id = db.Column(db.Integer, db.ForeignKey(
-        'requestset.id'), nullable=False)
-    blanktype_id = db.Column(db.Integer, db.ForeignKey(
-        'blanktype.id'), nullable=False)
-    text = db.Column(db.String(100))
-
-    completedanswers = db.relationship(
-        "Completed_Answer", backref="answer", lazy=True)
-    __tablename__ = "answer"
+    story_blank_id = db.Column(db.Integer, db.ForeignKey(
+        'story_blank.id'), nullable=False)
+    responseset_id = db.Column(db.Integer, db.ForeignKey(
+        'responseset.id'), nullable=False)
+    text = db.Column(db.String(1000))
+    __tablename__ = "response"
 
 
-class RequestSet_Blank(db.Model):
-    """Request Set to Blank relationship model."""
+class ResponseSet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    requestset_id = db.Column(db.Integer, db.ForeignKey(
-        'requestset.id'), nullable=False)
-    blanktype_id = db.Column(db.Integer, db.ForeignKey(
-        'blanktype.id'), nullable=False)
-
-    __tablename__ = "request_blank"
-
-
-class BlankType(db.Model):
-    """Blank Type model."""
-    id = db.Column(db.Integer, primary_key=True)
-    blanktype_id = db.Column(db.Integer, db.ForeignKey(
-        'blanktype.id'), nullable=False)
-    partofspeech = db.Column(db.String(100))
-    tense = db.Column(db.String(100))
+    story_id = db.Column(db.Integer, db.ForeignKey('story.id'), nullable=False)
+    user = db.Column(db.String(1000))
+    title = db.Column(db.String(1000))
     description = db.Column(db.String(1000))
 
-    answers = db.relationship("Answer", backref="blanktype", lazy=True)
-    requestset_blanks = db.relationship(
-        "RequestSet_Blank", backref="blanktype", lazy=True)
-    __tablename__ = "blanktype"
+    responses = db.relationship("Response", backref="responseset", lazy=True)
+    __tablename__ = "responseset"
+
+
+class Blank(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(1000))
+    hint = db.Column(db.String(1000))
+
+    story_blanks = db.relationship("Story_Blank", backref="blank", lazy=True)
+    __tablename__ = "blank"

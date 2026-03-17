@@ -93,8 +93,8 @@ def newTag():
     if newTagForm.validate_on_submit():
         try:
             makeNewTag(
-                tagName=request.form.get('name'),
-                tagDescription=request.form.get('description'))
+                tag_name=request.form.get('name'),
+                tag_description=request.form.get('description'))
             flash("Tag Created!", "success")
             return redirect(url_for('create.newTag', newTagForm=newTagForm))
         except ValueError as e:

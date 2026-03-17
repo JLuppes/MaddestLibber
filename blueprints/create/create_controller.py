@@ -5,6 +5,12 @@ from blueprints.create.create_forms import NewStoryForm, NewTagForm
 create = Blueprint('create', __name__, url_prefix='/create',
                    template_folder='./templates')
 
+blank_start = '~['
+blank_end = ']~'
+sep_char = '|'
+replaced_start = '~+'
+replaced_end = '+~'
+
 
 @create.route('/')
 def home():
@@ -12,13 +18,6 @@ def home():
 
 
 def makeNewStory(storyName='', storyDescription='', storyText=''):
-
-    blank_start = '~['
-    blank_end = ']~'
-    sep_char = '|'
-
-    # start_positions = [i for i in range(len(storyText)) if storyText.startswith(blank_start, i)]
-    # end_positions = [i for i in range(len(storyText)) if storyText.startswith(blank_end, i)]
 
     blanks = []
 
@@ -29,9 +28,11 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         if start == -1:
             break
         blank_text = storyText[(start+len(blank_start)):end]
-        sep_pos = blank_text.find(sep_char)
-        blank_name = blank_text[:sep_pos].strip()
-        blank_desc = blank_text[sep_pos+len(sep_char):].strip()
+        sep_pos = blank_text.find(sep_char, start, end)
+        blank_name = blank_text[:sep_pos].strip(
+        ) if sep_pos > -1 else blank_text[:end].strip()
+        blank_desc = blank_text[sep_pos +
+                                len(sep_char):].strip() if sep_pos > -1 else ''
         blanks.append((blank_name, blank_desc))
         start += len(blank_start+blank_end+blank_text)
 
@@ -49,6 +50,7 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         raise ValueError(error)
 
     pos_counter = 0
+    newStoryText = storyText
     for this_blank in blanks:
         try:
             new_blank = Blank(
@@ -74,6 +76,21 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
             db.session.rollback()
             error = "Error during story-blank connection: " + e
             raise ValueError(error)
+        # Replace blanks in story with story_blank id
+        start = newStoryText.find(blank_start)
+        end = newStoryText.find(blank_end)
+
+        replacement = replaced_start + str(new_story_blank.id) + replaced_end
+        newStoryText = newStoryText[:start] + \
+            replacement + newStoryText[end+len(blank_end):]
+
+    # Replace existing story text with our updated version
+    try:
+        new_story.text = newStoryText
+        db.session.commit()
+    except ValueError as e:
+        error = "Error replacing story text: " + e
+        flash(error, 'error')
 
     return new_story
 

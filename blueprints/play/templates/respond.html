@@ -10,15 +10,24 @@
   <ul>
     {% for i, thisRequest in enumerate(blanks) %}
     <li>
-      <label for="response-{{i}}">{{thisRequest.name}}</label>
+      <label for="response">{{thisRequest.name}}</label>
 
       <p>{% if thisRequest.hint %}Hint: {{thisRequest.hint}}{% endif %}</p>
 
-      <input name="response-{{i}}" id="response-{{i}}" type="text" />
+      <input name="response" id="response" type="text" />
     </li>
     <br />
     {% endfor %}
   </ul>
+
+  <label for="userName">Your Name:</label>
+  <input type="text" name="userName" id="userName" />
+  <label for="responseTitle">Title for Your Response:</label>
+  <input type="text" name="responseTitle" id="responseTitle" />
+  <label for="responseDescription">Description of Your Response:</label>
+  <input type="text" name="responseDescription" id="responseDescription" />
+
+  <input type="hidden" name="story_id" value="{{storyId}}" />
 
   <input type="submit" value="Submit Responses" />
 </form>

@@ -28,12 +28,48 @@ def respond(storyId=''):
     if requestSet is None:
         return redirect(url_for('play.home'), error="No requests found for that story!")
 
-    resonseSetId = 1
-
     if request.method == 'POST':
-        return redirect(url_for('play.finishedStory', storyId=story.id, responseSetId=resonseSetId))
 
-    return render_template('respond.html', storyName=story_name, storyDescription=story_description, requestSet=requestSet, enumerate=enumerate, blanks=blanks)
+        story_id = request.form.get('story_id')
+        user = request.form.get('userName')
+        title = request.form.get('responseTitle')
+        description = request.form.get('responseDescription')
+
+        try:
+            new_response_set = ResponseSet(
+                story_id=story_id,
+                user=user,
+                title=title,
+                description=description
+            )
+            db.session.add(new_response_set)
+            db.session.commit()
+            flash("Response added successfully!", 'success')
+        except ValueError as e:
+            db.session.rollback()
+            error = "Error adding response set: " + e
+            flash(error, 'error')
+
+        responses = request.form.getlist('response')
+
+        for i, response in enumerate(responses):
+            thisRequest = requestSet[i]
+            try:
+                newResponse = Response(
+                    story_blank_id=thisRequest.id,
+                    responseset_id=new_response_set.id,
+                    text=response
+                )
+                db.session.add(newResponse)
+                db.session.commit()
+            except ValueError as e:
+                db.session.rollback()
+                error = "Error adding response: " + e
+                flash(error, 'error')
+
+        return redirect(url_for('play.finishedStory', storyId=story_id, responseSetId=new_response_set.id))
+
+    return render_template('respond.html', storyName=story_name, storyDescription=story_description, requestSet=requestSet, storyId=story.id, enumerate=enumerate, blanks=blanks)
 
 
 @play.route('/list')

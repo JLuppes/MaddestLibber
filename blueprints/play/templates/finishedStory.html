@@ -19,7 +19,6 @@
         <thead>
             <tr>
                 <th>User</th>
-                <th>Submitted</th>
                 <th>Title</th>
                 <th>Description</th>
             </tr>
@@ -27,7 +26,6 @@
         <tbody>
             <tr>
                 <td>{{responseSet.user}}</td>
-                <td>Submitted Timestamp</td>
                 <td>{{responseSet.title}}</td>
                 <td>{{responseSet.description}}</td>
             </tr>
@@ -42,26 +40,45 @@
 <script>
     let responseList = [
 {% for thisResponse in responses %}
-        {
-            'story_blank_id': {{ thisResponse.story_blank_id }},
-            'text': '{{ thisResponse.text }}'
-        },
+    {% set story_blank_id = thisResponse['story_blank_id'] %}
+    {% set thisBlank = {}%}
+
+    {% for blank in responseSetBlankInfo %}
+        {% if blank['story_blank_id']==thisResponse['story_blank_id'] %}
+            {
+                'story_blank_id': {{ thisResponse.story_blank_id }},
+                'text': '{{ thisResponse.text }}',
+                'blank_name': '{{blank.blank_name}}',
+                'blank_hint': '{{blank.blank_hint}}'
+            },
+        {% endif %}
+    {% endfor %}
 {% endfor %}
     ]
+    console.log("This blank:")
+    console.log({{thisBlank}})
+    console.log("Response list:")
+    console.log(responseList)
     const replaceStart = "~+"
     const replaceEnd = "+~"
     let storyText = "{{story.text}}"
     responseList.forEach((thisResponse) => {
         const start = storyText.indexOf(replaceStart+thisResponse['story_blank_id'])
         const replaced = storyText.slice(start+replaceStart.length, start+replaceStart.length+thisResponse['story_blank_id'].toString().length)
-        storyText =storyText.replace(replaceStart+thisResponse['story_blank_id'].toString()+replaceEnd, thisResponse['text'])
+        const sep = thisResponse.blank_hint ? " | " : ""
+        const blankText = `
+        <div class="filledBlank">
+            <strong>` + thisResponse['text'] + `</strong>
+            <span class="filledBlankHint">${thisResponse.blank_name}${sep}${thisResponse.blank_hint}</span>
+        </div>`
+        storyText =storyText.replace(replaceStart+thisResponse['story_blank_id'].toString()+replaceEnd, blankText)
     })
 
     let txt = document.createElement("textarea")
     txt.innerHTML = storyText;
 
     const theStoryEl = document.getElementById('theStory')
-    theStoryEl.textContent = txt.value;
+    theStoryEl.innerHTML = txt.value;
 
 </script>
 {% endblock %}

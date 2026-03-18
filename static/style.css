@@ -104,3 +104,31 @@ th {
   border-radius: 10px;
   min-width: 50em;
 }
+
+
+/* From https://www.w3schools.com/css/css_tooltip.asp */
+/* Tooltip container */
+.filledBlank {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* Add dots under the hoverable text */
+  cursor: pointer;
+}
+
+/* Tooltip text */
+.filledBlankHint {
+  visibility: hidden; /* Hidden by default */
+  width: 130px;
+  background-color: black;
+  color: #ffffff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1; /* Ensure tooltip is displayed above content */
+}
+
+/* Show the tooltip text on hover */
+.filledBlank:hover .filledBlankHint {
+  visibility: visible;
+}

@@ -27,7 +27,7 @@ def respond(storyId=''):
 
     if requestSet is None:
         return redirect(url_for('play.home'), error="No requests found for that story!")
-    
+
     resonseSetId = 1
 
     if request.method == 'POST':
@@ -84,26 +84,45 @@ def finishedStory():
     responseSet = ResponseSet.query.filter_by(id=responseSetId).first()
     responses = Response.query.filter_by(responseset_id=responseSetId).all()
 
-    storyText = story.text
+    allStoryBlanks = Story_Blank.query.filter_by().all()
+    allBlanks = Blank.query.all()
 
-    return render_template('finishedStory.html', story=story, responseSet=responseSet, responses=responses)
+    responseSetBlankInfo = []
+    for response in responses:
+        story_blank = Story_Blank.query.filter_by(
+            id=response.story_blank_id).first()
+        blank = Blank.query.filter_by(id=story_blank.blank_id).first()
+        blank_name = blank.name
+        blank_hint = blank.hint
+        responseSetBlankInfo.append(
+            {
+                "story_blank_id": response.story_blank_id,
+                "blank_name": blank_name,
+                "blank_hint": blank_hint
+            }
+        )
+
+    return render_template('finishedStory.html', story=story, responseSet=responseSet, responses=responses, allStoryBlanks=allStoryBlanks, allBlanks=allBlanks, responseSetBlankInfo=responseSetBlankInfo)
 
 
 @play.route('/responses')
 def listResponses():
-    
+
     storyList = Story.query.all()
     responseSetList = ResponseSet.query.all()
-    
+
     return render_template('list_responses.html', storyList=storyList, responseSetList=responseSetList)
+
 
 def getRandomResponse():
     rowCount = int(ResponseSet.query.count())
-    randomResponseSet = ResponseSet.query.offset(int(rowCount*random.random())).first()
+    randomResponseSet = ResponseSet.query.offset(
+        int(rowCount*random.random())).first()
     return randomResponseSet
+
 
 @play.route('/read/random')
 def readRandomResponse():
     thisResponseSet = getRandomResponse()
-    
+
     return redirect(url_for('play.finishedStory', storyId=thisResponseSet.story_id, responseSetId=thisResponseSet.id))

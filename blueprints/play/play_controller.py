@@ -96,3 +96,14 @@ def listResponses():
     responseSetList = ResponseSet.query.all()
     
     return render_template('list_responses.html', storyList=storyList, responseSetList=responseSetList)
+
+def getRandomResponse():
+    rowCount = int(ResponseSet.query.count())
+    randomResponseSet = ResponseSet.query.offset(int(rowCount*random.random())).first()
+    return randomResponseSet
+
+@play.route('/read/random')
+def readRandomResponse():
+    thisResponseSet = getRandomResponse()
+    
+    return redirect(url_for('play.finishedStory', storyId=thisResponseSet.story_id, responseSetId=thisResponseSet.id))

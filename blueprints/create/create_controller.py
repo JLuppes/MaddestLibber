@@ -28,9 +28,8 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         if start == -1:
             break
         blank_text = storyText[(start+len(blank_start)):end]
-        sep_pos = blank_text.find(sep_char, start, end)
-        blank_name = blank_text[:sep_pos].strip(
-        ) if sep_pos > -1 else blank_text[:end].strip()
+        sep_pos = blank_text.find(sep_char)
+        blank_name = blank_text[:sep_pos].strip() if sep_pos > -1 else blank_text[:end].strip()
         blank_desc = blank_text[sep_pos +
                                 len(sep_char):].strip() if sep_pos > -1 else ''
         blanks.append((blank_name, blank_desc))

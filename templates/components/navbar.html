@@ -12,14 +12,40 @@
   The Maddest Libber
 </a>
 <ul class="nav nav-pills">
+  
   <li class="nav-item">
     <a href="{{url_for('main.home')}}" class="nav-link">Home</a>
   </li>
-  <li class="nav-item">
-    <a href="{{url_for('play.home')}}" class="nav-link">Play</a>
-  </li>
-  <li class="nav-item">
-    <a href="{{url_for('play.randomStory')}}" class="nav-link">Random Story</a>
+
+  <li class="nav-item dropdown">
+    <a
+      class="nav-link dropdown-toggle"
+      href="{{url_for('play.home')}}"
+      role="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      Play
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a class="dropdown-item" href="{{url_for('play.home')}}"
+          >Play Home</a
+        >
+      </li>
+      <li>
+        <hr class="dropdown-divider" />
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{url_for('play.listStories')}}">List Stories</a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{url_for('play.randomStory')}}">Fill Random Story</a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{url_for('play.listResponses')}}">Submitted Responses</a>
+      </li>
+    </ul>
   </li>
 
   <li class="nav-item dropdown">

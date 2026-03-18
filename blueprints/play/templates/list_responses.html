@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>List of responses:</h2>
+<div class="storyListContainer">
+    <table class="storyList">
+        <thead>
+            <tr>
+                <th>Story ID</th>
+                <th>Story Name</th>
+                <th>Story Description</th>
+                <th>Response Set ID</th>
+                <th>Response Set User</th>
+                <th>Response Set Name</th>
+                <th>Response Set Description</th>
+                <th>View</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for thisResponse in responseSetList %}
+                {% set thisStory = storyList[(thisResponse.story_id-1)] %}
+            <tr>
+                <td>
+                    {{thisStory.id}}
+                </td>
+                <td>{{thisStory.name}}</td>
+                <td>{{thisStory.description}}</td>
+                <td>{{thisResponse.id}}</td>
+                <td>{{thisResponse.user}}</td>
+                <td>{{thisResponse.title}}</td>
+                <td>{{thisResponse.description}}</td>
+                <td><a href="{{url_for('play.finishedStory', storyId=thisResponse.story_id, responseSetId=thisResponse.id)}}">Play</a></td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

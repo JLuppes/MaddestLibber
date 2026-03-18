@@ -87,3 +87,12 @@ def finishedStory():
     storyText = story.text
 
     return render_template('finishedStory.html', story=story, responseSet=responseSet, responses=responses)
+
+
+@play.route('/responses')
+def listResponses():
+    
+    storyList = Story.query.all()
+    responseSetList = ResponseSet.query.all()
+    
+    return render_template('list_responses.html', storyList=storyList, responseSetList=responseSetList)

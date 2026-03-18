@@ -58,7 +58,49 @@ form {
   background-color: coral;
 }
 
-.storyList td{
+.storyList td {
   min-width: 5em;
   width: auto;
+}
+
+.titleBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.titleCard {
+  border: 2px green dashed;
+  border-radius: 10px;
+  background-color: blueviolet;
+  min-width: 50em;
+}
+
+.storyBox {
+  border: 4px green double;
+  border-radius: 20px;
+  background-color: dimgrey;
+  margin: 2em;
+  padding: 2em;
+  color: antiquewhite;
+}
+
+table {
+  border: 2px ridge green;
+  border-radius: 10px;
+  background-color: darksalmon;
+}
+
+td,
+th {
+  border: 1px solid black;
+  padding: 1em;
+  margin: 1em;
+}
+.submittedBlock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  min-width: 50em;
 }

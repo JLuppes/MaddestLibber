@@ -41,6 +41,7 @@ class Story_Blank(db.Model):
     blank_id = db.Column(db.Integer, db.ForeignKey('blank.id'), nullable=False)
     position = db.Column(db.Integer)
 
+    responses = db.relationship("Response", backref="story_blank", lazy=True)
     __tablename__ = "story_blank"
 
 

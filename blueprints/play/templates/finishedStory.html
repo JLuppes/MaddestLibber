@@ -1,0 +1,67 @@
+{%extends 'base.html'%} 
+{% block content %}
+
+<div class="titleBox">
+    <div class="titleCard">
+        <h4>Story: {{story.name}}</h4>
+        <br />
+        <hr />
+        <h4>Description: {{story.description}}</h4>
+    </div>
+</div>
+
+<div class="storyBox">
+    <p id="theStory">No story yet!</p>
+</div>
+
+<div class="submittedBlock">
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Submitted</th>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{responseSet.user}}</td>
+                <td>Submitted Timestamp</td>
+                <td>{{responseSet.title}}</td>
+                <td>{{responseSet.description}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{%endblock%}
+
+{% block scripts %}
+{{super()}}
+<script>
+    let responseList = [
+{% for thisResponse in responses %}
+        {
+            'story_blank_id': {{ thisResponse.story_blank_id }},
+            'text': '{{ thisResponse.text }}'
+        },
+{% endfor %}
+    ]
+    const replaceStart = "~+"
+    const replaceEnd = "+~"
+    let storyText = "{{story.text}}"
+    responseList.forEach((thisResponse) => {
+        const start = storyText.indexOf(replaceStart+thisResponse['story_blank_id'])
+        const replaced = storyText.slice(start+replaceStart.length, start+replaceStart.length+thisResponse['story_blank_id'].toString().length)
+        storyText =storyText.replace(replaceStart+thisResponse['story_blank_id'].toString()+replaceEnd, thisResponse['text'])
+    })
+
+    let txt = document.createElement("textarea")
+    txt.innerHTML = storyText;
+
+    const theStoryEl = document.getElementById('theStory')
+    theStoryEl.textContent = txt.value;
+
+</script>
+{% endblock %}

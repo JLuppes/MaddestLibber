@@ -7,18 +7,22 @@
 
 
 <form action="" method="POST">
-  <ul>
-    {% for i, thisRequest in enumerate(blanks) %}
-    <li>
-        <label for="response-{{i}}">{{thisRequest.name}}</label>
-        <p>Hint: {{thisRequest.hint}}</p>
-        <input name="response-{{i}}" id="response-{{i}}" type="text">
-    </li>
-    <br>
-    {% endfor %}
-  </ul>
+    <ul>
+        {% for i, thisRequest in enumerate(blanks) %}
+        <li>
+            <label for="response-{{i}}">{{thisRequest.name}}</label>
 
-  <input type="submit" value="Submit Responses" />
+            <p>
+                {% if thisRequest.hint %}Hint: {{thisRequest.hint}}{% endif %}
+            </p>
+
+            <input name="response-{{i}}" id="response-{{i}}" type="text">
+        </li>
+        <br>
+        {% endfor %}
+    </ul>
+
+    <input type="submit" value="Submit Responses" />
 </form>
 
 {%endblock%}

@@ -1,45 +1,116 @@
-{% extends 'base.html' %}
-{% block title %}{{super()}} - Create Story{%endblock%}
-{% block content %}
+{% extends 'base.html' %} {% block title %}{{super()}} - Create
+Story{%endblock%} {% block content %}
 
-<form method="POST" action="{{url_for('create.newStory')}}">
-  <h2>Create a Story!</h2>
+<div class="py-2 text-center">
+  <div class="container mt-1">
+    <div class="p-2 text-center bg-body-tertiary rounded-3">
+      <h1 class="text-body-emphasis">Create a New Story!</h1>
+      <p class="lead">
+        Write your own story and include blanks for others to fill in.
+      </p>
+    </div>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form method="POST" action="{{url_for('create.newStory')}}">
+      {{ newStoryForm.csrf_token }}
 
-  {{ newStoryForm.csrf_token }}
-  {{ newStoryForm.name.label }}: {{newStoryForm.name(size=20) }}
-  <br />
-  {{ newStoryForm.description.label }}: {{ newStoryForm.description(size=20) }}
-  <br />
-  <br />
-  <p>Add blanks with ~[blankName | description of blank ]~</p>
-  {{ newStoryForm.text.label}}: {{newStoryForm.text(size=100)}}
-  <br />
+      <div class="row border border-secondary mb-3 pb-2">
+        <div class="gy-3">
+          {{ newStoryForm.name.label(class="form-label") }}:
+          {{newStoryForm.name(size=20, class="form-control") }}
+          <br />
+          {{ newStoryForm.description.label(class="form-label") }}: {{
+          newStoryForm.description(size=20, class="form-control") }}
+        </div>
+      </div>
 
-  <h3>Tags:</h3>
-  <ul id="storyTagList"></ul>
+      <div class="row border border-secondary mb-3 pb-2">
+        <div class="gy-3">
+          {{ newStoryForm.text.label(class="form-label")}}:
+          {{newStoryForm.text(id="story-text-box", rows=8,
+          class="form-control")}}
+          <button class="form-control-sm" onclick="clearStory(event)">
+            Clear
+          </button>
 
-  <input type="hidden" id="tagList" name="tagList" value="" />
+          <p>Insert a blank:</p>
+          <div>
+            <label for="newBlankName">Prompt</label>
+            <input type="text" name="newBlankName" id="newBlankName" />
+            <label for="newBlankHint">Hint</label>
+            <input type="text" name="newBlankHint" id="newBlankHint" />
+            <button onclick="handleBlank(event)" class="form-control-sm">
+              Add Blank
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row border border-secondary mb-3 pb-2">
+        <div class="gy-3">
+          <h3>Tags:</h3>
+          <ul id="storyTagList"></ul>
 
-  <input class="submit" type="submit" value="Submit Story" />
-</form>
+          <input type="hidden" id="tagList" name="tagList" value="" />
+        </div>
+      </div>
 
-<form id="tagAdditionForm" action="#">
-  <h3>Add Tags:</h3>
-  <p>(Ctrl+Click for multiples)</p>
-  <select name="tags" id="tags" multiple>
-    {% for tag in tags %}
-    <option id="tagOption-{{tag.id}}" value="{{tag.id}}">
-      <span class="tagName">{{tag.name}}</span>: <span class="tagDesc">{{tag.description}}</span>
-    </option>
-    {% endfor %}
-  </select>
-  <br />
-  <input type="submit" onclick="handleNewTagForm(event)" value="Add Tag" />
-</form>
-{% endblock %}
+      <input
+        class="form-control-sm"
+        class="submit"
+        type="submit"
+        value="Submit Story"
+      />
+    </form>
+  </div>
+  <div class="col-4">
+    <form id="tagAdditionForm" action="#">
+      <h3>Add Tags:</h3>
+      <p>(Ctrl+Click for multiples)</p>
+      <select name="tags" id="tags" multiple class="form-control">
+        {% for tag in tags %}
+        <option id="tagOption-{{tag.id}}" value="{{tag.id}}">
+          <span class="tagName">{{tag.name}}</span>:
+          <span class="tagDesc">{{tag.description}}</span>
+        </option>
+        {% endfor %}
+      </select>
+      <br />
+      <input
+        class="form-control-sm"
+        type="submit"
+        onclick="handleNewTagForm(event)"
+        value="Add Tag"
+      />
+    </form>
+  </div>
+</div>
+{% endblock %} {% block scripts %} {{super()}}
+<script>
+  const newBlankName = document.getElementById("newBlankName");
+  const newBlankHint = document.getElementById("newBlankHint");
+  const newStoryBox = document.getElementById("story-text-box");
 
-{% block scripts %}
-{{super()}}
+  function clearStory(event) {
+    event.preventDefault();
+
+    newStoryBox.value = "";
+  }
+  function handleBlank(event) {
+    event.preventDefault();
+    const newName = newBlankName.value;
+    const newHint = newBlankHint.value;
+
+    const secondHalf = newHint ? "|" + newHint : "";
+
+    newStoryBox.value += `~[${newName}${secondHalf}]~`;
+
+    newBlankName.value = "";
+    newBlankHint.value = "";
+  }
+</script>
+
 <script>
   const storyTagList = document.getElementById("storyTagList");
   const addTagForm = document.getElementById("tagAdditionForm");

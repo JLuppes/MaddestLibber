@@ -3,25 +3,25 @@
 {% block content %}
 
 <h2>List of stories:</h2>
-<div class="storyListContainer">
-    <table class="storyList">
+<div class="table-responsive">
+    <table class="storyList table table-dark table-hover table-striped table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Story Name</th>
-                <th>Description</th>
-                <th>Tags</th>
-                <th>Play</th>
+                <th scope="col">ID</th>
+                <th scope="col">Story Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Tags</th>
+                <th scope="col" style="text-align: center;">Play</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
             {%for thisStory in stories %}
             <tr>
                 <td>{{thisStory[0].id}}</td>
                 <td>{{thisStory[0].name}}</td>
                 <td>{{thisStory[0].description}}</td>
                 <td>{% for thisTag in thisStory[1] %}{{thisTag.name}}{%endfor%}</td>
-                <td><a href="{{url_for('play.respond', storyId=thisStory[0].id)}}">Play</a></td>
+                <td style="text-align: center;"><a href="{{url_for('play.respond', storyId=thisStory[0].id)}}" style="text-decoration: none;">📝</a></td>
             </tr>
             {%endfor%}
         </tbody>

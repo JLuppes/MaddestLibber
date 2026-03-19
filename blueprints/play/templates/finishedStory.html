@@ -11,7 +11,7 @@
             <h5 class="card-title">Title: {%if story.name%}{{story.name}}{%else%}N/A{%endif%}</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if story.description%}{{story.description}}{%else%}N/A{%endif%}</h6>
             <h5 class="card-title">Response:</h5>
-            <h5 class="card-title">Title: {%if responseSet.name%}{{responseSet.name}}{%else%}N/A{%endif%}</h5>
+            <h5 class="card-title">Title: {{responseSet.title if responseSet.title else "N/A"}}</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if responseSet.description%}{{responseSet.description}}{%else%}N/A{%endif%}</h6>
             <h6 class="card-subtitle mb-2 text-body-secondary">Submitted By: {%if responseSet.user%}{{responseSet.user}}{%else%}N/A{%endif%}</h6>
             <a href="#" class="card-link">Random Response</a>
@@ -43,13 +43,9 @@
     {% endfor %}
 {% endfor %}
     ]
-    console.log("This blank:")
-    console.log({{thisBlank}})
-    console.log("Response list:")
-    console.log(responseList)
     const replaceStart = "~+"
     const replaceEnd = "+~"
-    let storyText = "{{story.text}}"
+    let storyText = `{{story.text}}`
     responseList.forEach((thisResponse) => {
         const start = storyText.indexOf(replaceStart+thisResponse['story_blank_id'])
         const replaced = storyText.slice(start+replaceStart.length, start+replaceStart.length+thisResponse['story_blank_id'].toString().length)

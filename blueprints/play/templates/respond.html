@@ -9,41 +9,61 @@
 </div>
 <div class="row justify-content-center">
   <div class="col-6">
-    <form action="" method="POST">
+    <form class="form-floating" action="" method="POST">
+      {% for i, thisRequest in enumerate(blanks) %}
       <div class="row">
-        {% for i, thisRequest in enumerate(blanks) %}
-        <div class="col-12 border border-primary mb-2">
-          <div class="row mt-0 mb-3 mt-2">
-            <div class="input-group has-validation">
-              <div class="col-4">
-                <span class="input-group-text"><label for="response-field-{{thisRequest.id}}" class="form-label" id="response-label-{{thisRequest.id}}">Prompt:
-                    {{thisRequest.name}}</label></span>
-              </div>
-              <div class="col-8">
-                <span class="input-group-text">
-                  <label id="response-field-hint-label-{{thisRequest.id}}">
-                    Hint: {{thisRequest.hint if thisRequest.hint else "(none)"}}
-                  </label>
-                </span>
-              </div>
-            </div>
+        <div class="border border-primary-subtle rounded-2 mb-2">
+          <div class="form-floating mt-4">
+            <input
+              class="form-control overflow-scroll"
+              aria-labelledby="response-label-{{thisRequest.id}} response-field-hint-label-{{thisRequest.id}}"
+              aria-label="Text response to prompt"
+              name="response"
+              id="response-field-{{thisRequest.id}}"
+              type="text"
+              required
+            />
+            <label
+              for="response-field-{{thisRequest.id}}"
+              class="form-label"
+              id="response-label-{{thisRequest.id}}"
+            >
+              Prompt: {{thisRequest.name}}, Hint: {{thisRequest.hint if
+              thisRequest.hint else "(none)"}}
+            </label>
           </div>
-          <div class="row mx-xl-1">
-            <input class="form-control" aria-labelledby="response-label-{{thisRequest.id}} response-field-hint-label-{{thisRequest.id}}" aria-label="Text response to prompt" name="response" id="response-field-{{thisRequest.id}}" type="text"
-              required />
-          </div>
+
           <br />
         </div>
-        {% endfor %}
       </div>
-      <div class="row border border-secondary mb-3 pb-2">
+      {% endfor %}
+      <div class="row border border-secondary-subtle rounded-2 pb-2 mb-2">
         <div class="gy-3">
           <label class="form-label" for="userName">Your Name:</label>
-          <input class="form-control" type="text" name="userName" id="userName" />
-          <label class="form-label" for="responseTitle">Title for Your Response:</label>
-          <input class="form-control" type="text" name="responseTitle" id="responseTitle" />
-          <label class="form-label" for="responseDescription">Description of Your Response:</label>
-          <input class="form-control" type="text" name="responseDescription" id="responseDescription" />
+          <input
+            class="form-control"
+            type="text"
+            name="userName"
+            id="userName"
+          />
+          <label class="form-label" for="responseTitle"
+            >Title for Your Response:</label
+          >
+          <input
+            class="form-control"
+            type="text"
+            name="responseTitle"
+            id="responseTitle"
+          />
+          <label class="form-label" for="responseDescription"
+            >Description of Your Response:</label
+          >
+          <input
+            class="form-control"
+            type="text"
+            name="responseDescription"
+            id="responseDescription"
+          />
         </div>
         <input type="hidden" name="story_id" value="{{storyId}}" />
       </div>

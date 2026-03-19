@@ -8,12 +8,6 @@ h1 {
   color: green;
 }
 
-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
 .error {
   color: red;
 }
@@ -24,7 +18,15 @@ form {
   justify-content: center;
 }
 
-form div {
+p {
+  margin-bottom: 0rem;
+}
+
+.form-label {
+  margin-bottom: 0rem;
+}
+
+/* form div {
   margin: 10px 0;
 }
 
@@ -34,10 +36,13 @@ label {
 }
 
 form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
   border: 2px solid green;
   border-radius: 10px;
   background-color: darkgoldenrod;
-}
+} */
 
 .storyListContainer {
   display: flex;
@@ -63,7 +68,7 @@ form {
   width: auto;
 }
 
-.titleBox {
+/* .titleBox {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -74,7 +79,7 @@ form {
   border-radius: 10px;
   background-color: blueviolet;
   min-width: 50em;
-}
+} */
 
 .storyBox {
   border: 4px green double;

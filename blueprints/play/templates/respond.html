@@ -1,35 +1,93 @@
 {%extends 'base.html'%} {% block content %}
-<div class="titleBox">
-  <div class="titleCard">
-    <h4>Story: {{storyName}}</h4>
-    <h4>Description: {{storyDescription}}</h4>
+<div class="py-5 text-center">
+  <h1 class="h2">Fill Out A Story</h1>
+  <p class="lead">
+    Use the boxes below to enter responses to various prompts. Keep in the mind
+    the prompt and hints to try to make your answers line up with the story!
+  </p>
+  <br />
+  <div class="titleBox">
+    <div class="titleCard">
+      <h4>Story: {{storyName}}</h4>
+      <h4>Description: {{storyDescription}}</h4>
+    </div>
   </div>
 </div>
-
-<form action="" method="POST">
-  <ul>
-    {% for i, thisRequest in enumerate(blanks) %}
-    <li>
-      <label for="response">{{thisRequest.name}}</label>
-
-      <p>{% if thisRequest.hint %}Hint: {{thisRequest.hint}}{% endif %}</p>
-
-      <input name="response" id="response" type="text" />
-    </li>
-    <br />
-    {% endfor %}
-  </ul>
-
-  <label for="userName">Your Name:</label>
-  <input type="text" name="userName" id="userName" />
-  <label for="responseTitle">Title for Your Response:</label>
-  <input type="text" name="responseTitle" id="responseTitle" />
-  <label for="responseDescription">Description of Your Response:</label>
-  <input type="text" name="responseDescription" id="responseDescription" />
-
-  <input type="hidden" name="story_id" value="{{storyId}}" />
-
-  <input type="submit" value="Submit Responses" />
-</form>
-
+<div class="row justify-content-center">
+  <div class="col-6">
+    <form action="" method="POST">
+      <div class="row">
+        {% for i, thisRequest in enumerate(blanks) %}
+        <div class="col-12 border border-primary mb-2">
+          <div class="row mt-0 mb-3 mt-2">
+            <div class="input-group has-validation">
+              <div class="col-4">
+                <span class="input-group-text"
+                  ><label for="response" class="form-label"
+                    >Prompt: {{thisRequest.name}}</label
+                  ></span
+                >
+              </div>
+              <div class="col-8">
+                <span class="input-group-text"
+                  ><p>
+                    Hint: {% if thisRequest.hint
+                    %}{{thisRequest.hint}}{%else%}(none){% endif %}
+                  </p>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row mx-xl-1">
+            <input
+              class="form-control"
+              aria-label="Text response to prompt"
+              name="response"
+              id="response"
+              type="text"
+              required
+            />
+          </div>
+          <br />
+        </div>
+        {% endfor %}
+      </div>
+      <div class="row border border-secondary mb-3 pb-2">
+        <div class="gy-3">
+          <label class="form-label" for="userName">Your Name:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="userName"
+            id="userName"
+          />
+          <label class="form-label" for="responseTitle"
+            >Title for Your Response:</label
+          >
+          <input
+            class="form-control"
+            type="text"
+            name="responseTitle"
+            id="responseTitle"
+          />
+          <label class="form-label" for="responseDescription"
+            >Description of Your Response:</label
+          >
+          <input
+            class="form-control"
+            type="text"
+            name="responseDescription"
+            id="responseDescription"
+          />
+        </div>
+        <input type="hidden" name="story_id" value="{{storyId}}" />
+      </div>
+      <div class="row">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">
+          Submit Responses
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 {%endblock%}

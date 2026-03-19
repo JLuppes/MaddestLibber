@@ -39,15 +39,9 @@
             <p class="error">{{error}}</p>
             {% endif %} {# Display flashed messages #} 
             {% with messages = get_flashed_messages(with_categories=true) %} 
-            {% if messages %}
-            <ul class="flashes">
-                {% for category, message in messages %}
-                <li class="alert alert-dismissible fade show {{ category }} alert-{{ category }}" role="alert">
-                    {{ message }}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %} 
+                {% if messages %}
+                    {% include 'components/toasts.html' %}
+                {% endif %} 
             {% endwith %} 
 
             {# Templates will add their own content here #} 
@@ -60,6 +54,15 @@
 
     {#Scripts #} 
     {%block scripts%} 
+
+        {# Jquery for Toasts #}
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('.toast').toast('show');
+            });
+        </script>
+
         {# Bootstrap Script #}
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"

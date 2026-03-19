@@ -2,11 +2,72 @@
 {%block content %}
 
 <h2>Play!</h2>
-<hr />
-<p><a href="{{url_for('create.newStory')}}">Create a new story</a></p>
-<hr />
-<p><a href="{{url_for('play.listStories')}}">Pick an existing story</a></p>
-<hr />
-<p><a href="{{url_for('play.randomStory')}}">Random story!</a></p>
+
+<div
+  class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center"
+>
+  <div class="list-group">    
+    <a
+      href="{{url_for('play.listStories')}}"
+      class="list-group-item list-group-item-action d-flex gap-3 py-3"
+      aria-current="true"
+    >
+      📜
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div>
+          <h6 class="mb-0">Stories</h6>
+          <p class="mb-0 opacity-75">
+            View the list of stories that have been written.
+          </p>
+        </div>
+      </div>
+    </a>
+    <a
+      href="{{url_for('play.randomStory')}}"
+      class="list-group-item list-group-item-action d-flex gap-3 py-3"
+      aria-current="true"
+    >
+      🖊️
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div>
+          <h6 class="mb-0">Random Story</h6>
+          <p class="mb-0 opacity-75">
+            Get a random story to fill in!
+          </p>
+        </div>
+      </div>
+    </a>
+    <a
+      href="{{url_for('play.listResponses')}}"
+      class="list-group-item list-group-item-action d-flex gap-3 py-3"
+      aria-current="true"
+    >
+      📚
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div>
+          <h6 class="mb-0">Responses</h6>
+          <p class="mb-0 opacity-75">
+            Read stories that have been filled in by other users!
+          </p>
+        </div>
+      </div>
+    </a>
+    <a
+      href="{{url_for('play.randomStory')}}"
+      class="list-group-item list-group-item-action d-flex gap-3 py-3"
+      aria-current="true"
+    >
+      💫
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div>
+          <h6 class="mb-0">Read Random Response</h6>
+          <p class="mb-0 opacity-75">
+            Read a random response that someone else has filled in!
+          </p>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
 
 {%endblock%}

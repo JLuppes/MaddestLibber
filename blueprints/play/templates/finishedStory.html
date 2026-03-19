@@ -1,37 +1,25 @@
 {%extends 'base.html'%} 
 {% block content %}
 
-<div class="titleBox">
-    <div class="titleCard">
-        <h4>Story: {{story.name}}</h4>
-        <br />
-        <hr />
-        <h4>Description: {{story.description}}</h4>
+<div class="container">
+    <div class="mx-auto card mb-4" style="width: 40rem;">
+        <div class="card-body">
+            <div class="storyBox">
+                <p class="card-text" id="theStory">No story yet!</p>
+            </div>
+            <h5 class="card-title">Story:</h5>
+            <h5 class="card-title">Title: {%if story.name%}{{story.name}}{%else%}N/A{%endif%}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if story.description%}{{story.description}}{%else%}N/A{%endif%}</h6>
+            <h5 class="card-title">Response:</h5>
+            <h5 class="card-title">Title: {%if responseSet.name%}{{responseSet.name}}{%else%}N/A{%endif%}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if responseSet.description%}{{responseSet.description}}{%else%}N/A{%endif%}</h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Submitted By: {%if responseSet.user%}{{responseSet.user}}{%else%}N/A{%endif%}</h6>
+            <a href="#" class="card-link">Random Response</a>
+            <a href="#" class="card-link">Submit Your Own</a>
+        </div>
     </div>
 </div>
 
-<div class="storyBox">
-    <p id="theStory">No story yet!</p>
-</div>
-
-<div class="submittedBlock">
-    <table>
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Title</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{responseSet.user}}</td>
-                <td>{{responseSet.title}}</td>
-                <td>{{responseSet.description}}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
 {%endblock%}
 

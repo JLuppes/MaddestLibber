@@ -1,0 +1,61 @@
+<div class="container">
+  <footer
+    class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top"
+  >
+    <div class="col mb-3">
+      <p class="text-body-secondary">© 2026 Joshua Luppes</p>
+    </div>
+    <div class="col mb-3"></div>
+    <div class="col mb-3">
+      <h5>Main</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a href="{{url_for('main.home')}}" class="nav-link p-0 text-body-secondary">Home</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('play.home')}}" class="nav-link p-0 text-body-secondary">Play</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('create.home')}}" class="nav-link p-0 text-body-secondary">Create</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('admin.index')}}" class="nav-link p-0 text-body-secondary">Admin</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col mb-3">
+      <h5>Play</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a href="{{url_for('play.home')}}" class="nav-link p-0 text-body-secondary">Play Home</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('play.listStories')}}" class="nav-link p-0 text-body-secondary">List Stories</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('play.listResponses')}}" class="nav-link p-0 text-body-secondary">Submitted Responses</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('play.randomStory')}}" class="nav-link p-0 text-body-secondary">Fill Random Story</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('play.readRandomResponse')}}" class="nav-link p-0 text-body-secondary">Read Completed Stories</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col mb-3">
+      <h5>Create</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a href="{{url_for('create.home')}}" class="nav-link p-0 text-body-secondary">Create Home</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('create.newTag')}}" class="nav-link p-0 text-body-secondary">Tag</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{{url_for('create.newStory')}}" class="nav-link p-0 text-body-secondary">Story</a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+</div>

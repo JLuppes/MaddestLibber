@@ -1,15 +1,9 @@
 {%extends 'base.html'%} {% block content %}
-<div class="py-5 text-center">
-  <h1 class="h2">Fill Out A Story</h1>
-  <p class="lead">
-    Use the boxes below to enter responses to various prompts. Keep in the mind
-    the prompt and hints to try to make your answers line up with the story!
-  </p>
-  <br />
-  <div class="titleBox">
-    <div class="titleCard">
-      <h4>Story: {{storyName}}</h4>
-      <h4>Description: {{storyDescription}}</h4>
+<div class="py-2 text-center">
+  <div class="container mt-1">
+    <div class="p-2 text-center bg-body-tertiary rounded-3">
+      <h1 class="text-body-emphasis">{{storyName}}</h1>
+      <p class="lead">{{storyDescription}}</p>
     </div>
   </div>
 </div>

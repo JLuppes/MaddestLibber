@@ -3,34 +3,32 @@
 {% block content %}
 
 <h2>List of responses:</h2>
-<div class="storyListContainer">
-    <table class="storyList">
+<div class="table-responsive">
+    <table class="storyList table table-dark table-hover table-striped table-bordered align-middle">
         <thead>
             <tr>
-                <th>Story ID</th>
-                <th>Story Name</th>
-                <th>Story Description</th>
-                <th>Response Set ID</th>
-                <th>Response Set User</th>
-                <th>Response Set Name</th>
-                <th>Response Set Description</th>
-                <th>View</th>
+                {# <th scope="col">Story ID</th> #}
+                <th scope="col">Story Name</th>
+                <th scope="col">Story Description</th>
+                {# <th scope="col">Response Set ID</th> #}
+                <th scope="col">Submitted By</th>
+                <th scope="col">Response Name</th>
+                <th scope="col">Response Description</th>
+                <th scope="col">View</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
             {%for thisResponse in responseSetList %}
                 {% set thisStory = storyList[(thisResponse.story_id-1)] %}
             <tr>
-                <td>
-                    {{thisStory.id}}
-                </td>
+                {# <td>{{thisStory.id}}</td> #}
                 <td>{{thisStory.name}}</td>
                 <td>{{thisStory.description}}</td>
-                <td>{{thisResponse.id}}</td>
+                {# <td>{{thisResponse.id}}</td> #}
                 <td>{{thisResponse.user}}</td>
                 <td>{{thisResponse.title}}</td>
                 <td>{{thisResponse.description}}</td>
-                <td><a href="{{url_for('play.finishedStory', storyId=thisResponse.story_id, responseSetId=thisResponse.id)}}">Play</a></td>
+                <td style="text-align: center;"><a style="text-decoration:none" href="{{url_for('play.finishedStory', storyId=thisResponse.story_id, responseSetId=thisResponse.id)}}">👁️</a></td>
             </tr>
             {%endfor%}
         </tbody>

@@ -110,10 +110,7 @@ Story{%endblock%} {% block content %}
     const newHint = newBlankHint.value;
     const newNamed = newBlankNamed.value;
 
-    console.log(newNamed);
-
-    const namedTag = newNamed === "on" ? namedBlankTag : "";
-
+    const namedTag = newNamed === true ? namedBlankTag : "";
     const secondHalf = newHint ? "|" + newHint : "";
 
     newStoryBox.value += `${leftBracket}${namedTag}${newName}${secondHalf}${rightBracket}`;

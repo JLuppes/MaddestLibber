@@ -41,6 +41,9 @@ Story{%endblock%} {% block content %}
             <input type="text" name="newBlankName" id="newBlankName" />
             <label for="newBlankHint">Hint</label>
             <input type="text" name="newBlankHint" id="newBlankHint" />
+            <label for="newBlankNamed">Named Blank?</label>
+            <input type="checkbox" name="newBlankNamed" id="newBlankNamed" />
+
             <button onclick="handleBlank(event)" class="form-control-sm">
               Add Blank
             </button>
@@ -90,7 +93,11 @@ Story{%endblock%} {% block content %}
 <script>
   const newBlankName = document.getElementById("newBlankName");
   const newBlankHint = document.getElementById("newBlankHint");
+  const newBlankNamed = document.getElementById("newBlankNamed");
   const newStoryBox = document.getElementById("story-text-box");
+  const namedBlankTag = "*";
+  const leftBracket = `~[`;
+  const rightBracket = `]~`;
 
   function clearStory(event) {
     event.preventDefault();
@@ -101,13 +108,19 @@ Story{%endblock%} {% block content %}
     event.preventDefault();
     const newName = newBlankName.value;
     const newHint = newBlankHint.value;
+    const newNamed = newBlankNamed.value;
+
+    console.log(newNamed);
+
+    const namedTag = newNamed === "on" ? namedBlankTag : "";
 
     const secondHalf = newHint ? "|" + newHint : "";
 
-    newStoryBox.value += `~[${newName}${secondHalf}]~`;
+    newStoryBox.value += `${leftBracket}${namedTag}${newName}${secondHalf}${rightBracket}`;
 
     newBlankName.value = "";
     newBlankHint.value = "";
+    newBlankNamed.checked = false
   }
 </script>
 

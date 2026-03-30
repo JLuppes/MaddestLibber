@@ -95,9 +95,9 @@ Story{%endblock%} {% block content %}
   const newBlankHint = document.getElementById("newBlankHint");
   const newBlankNamed = document.getElementById("newBlankNamed");
   const newStoryBox = document.getElementById("story-text-box");
-  const namedBlankTag = "*";
-  const leftBracket = `~[`;
-  const rightBracket = `]~`;
+  const namedBlankTag = {% if namedBlankTag %}"{{namedBlankTag}}"{% else %}"*"{% endif %};
+  const leftBracket = {% if leftBracket %}"{{leftBracket}}"{% else %}`~[`{% endif %} ;
+  const rightBracket = {% if rightBracket %}"{{rightBracket}}"{% else %}`]~`{% endif %} ;
 
   function clearStory(event) {
     event.preventDefault();
@@ -108,7 +108,7 @@ Story{%endblock%} {% block content %}
     event.preventDefault();
     const newName = newBlankName.value;
     const newHint = newBlankHint.value;
-    const newNamed = newBlankNamed.value;
+    const newNamed = newBlankNamed.checked;
 
     const namedTag = newNamed === true ? namedBlankTag : "";
     const secondHalf = newHint ? "|" + newHint : "";

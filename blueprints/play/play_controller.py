@@ -31,9 +31,9 @@ def respond(storyId=''):
     if request.method == 'POST':
 
         story_id = request.form.get('story_id')
-        user = request.form.get('userName')
-        title = request.form.get('responseTitle')
-        description = request.form.get('responseDescription')
+        user = request.form.get('userName', 'Anonymous')
+        title = request.form.get('responseTitle', 'Untitled')
+        description = request.form.get('responseDescription', 'No description')
 
         try:
             new_response_set = ResponseSet(

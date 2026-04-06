@@ -1,4 +1,4 @@
-{%extends 'base.html'%} 
+{%extends 'base.html'%}
 {% block content %}
 
 <div class="container">
@@ -14,11 +14,12 @@
             <h5 class="card-title">Title: {{responseSet.title if responseSet.title else "N/A"}}</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if responseSet.description%}{{responseSet.description}}{%else%}N/A{%endif%}</h6>
             <h6 class="card-subtitle mb-2 text-body-secondary">Submitted By: {%if responseSet.user%}{{responseSet.user}}{%else%}N/A{%endif%}</h6>
-            <a href="#" class="card-link">Random Response</a>
-            <a href="#" class="card-link">Submit Your Own</a>
+            <a href="{{url_for('play.randomStory')}}" class="card-link">Random Response</a>
+            <a href="{{url_for('play.respond', storyId=story.id)}}" class="card-link">Submit Your Own</a>
         </div>
     </div>
 </div>
+
 
 
 {%endblock%}
@@ -29,8 +30,6 @@
     let responseList = [
 {% for thisResponse in responses %}
     {% set story_blank_id = thisResponse['story_blank_id'] %}
-    {% set thisBlank = {}%}
-
     {% for blank in responseSetBlankInfo %}
         {% if blank['story_blank_id']==thisResponse['story_blank_id'] %}
             {
@@ -55,7 +54,11 @@
             <strong>` + thisResponse['text'] + `</strong>
             <span class="filledBlankHint">${thisResponse.blank_name}${sep}${thisResponse.blank_hint}</span>
         </div>`
-        storyText =storyText.replace(replaceStart+thisResponse['story_blank_id'].toString()+replaceEnd, blankText)
+        const replaceable = replaceStart+thisResponse['story_blank_id'].toString()+replaceEnd;
+        while (storyText.includes(replaceable)){
+            storyText =storyText.replace(replaceable, blankText)
+        }
+
     })
 
     let txt = document.createElement("textarea")

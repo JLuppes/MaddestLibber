@@ -7,6 +7,7 @@ create = Blueprint('create', __name__, url_prefix='/create',
 
 blank_start = '~['
 blank_end = ']~'
+named_blank_tag = '*'
 sep_char = '|'
 replaced_start = '~+'
 replaced_end = '+~'
@@ -29,10 +30,13 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
             break
         blank_text = storyText[(start+len(blank_start)):end]
         sep_pos = blank_text.find(sep_char)
-        blank_name = blank_text[:sep_pos].strip() if sep_pos > -1 else blank_text[:end].strip()
+        blank_name = blank_text[:sep_pos].strip(
+        ) if sep_pos > -1 else blank_text[:end].strip()
+        named_blank = blank_name.startswith(named_blank_tag)
+        blank_name = blank_name.removeprefix(named_blank_tag)
         blank_desc = blank_text[sep_pos +
                                 len(sep_char):].strip() if sep_pos > -1 else ''
-        blanks.append((blank_name, blank_desc))
+        blanks.append((blank_name, blank_desc, named_blank))
         start += len(blank_start+blank_end+blank_text)
 
     try:
@@ -48,33 +52,46 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         error = f"Error adding story to database: {e}"
         raise ValueError(error)
 
+    dict_of_named_blanks = dict()
+    dict_of_story_blanks = dict()
     pos_counter = 0
     newStoryText = storyText
     for this_blank in blanks:
-        try:
-            new_blank = Blank(
-                name=this_blank[0],
-                hint=this_blank[1]
-            )
-            db.session.add(new_blank)
-            db.session.commit()
-        except ValueError as e:
-            db.session.rollback()
-            error = "Error adding new blank: " + e
-            flash(error, 'error')
-        try:
-            new_story_blank = Story_Blank(
-                story_id=new_story.id,
-                blank_id=new_blank.id,
-                position=pos_counter
-            )
-            db.session.add(new_story_blank)
-            db.session.commit()
-            pos_counter += 1
-        except ValueError as e:
-            db.session.rollback()
-            error = "Error during story-blank connection: " + e
-            raise ValueError(error)
+        name = this_blank[0]
+        hint = this_blank[1]
+        named = this_blank[2]
+        if not named or not name in dict_of_named_blanks.keys():
+            try:
+                new_blank = Blank(
+                    name=name,
+                    hint=hint
+                )
+                db.session.add(new_blank)
+                db.session.commit()
+            except ValueError as e:
+                db.session.rollback()
+                error = "Error adding new blank: " + e
+                flash(error, 'error')
+            try:
+                new_story_blank = Story_Blank(
+                    story_id=new_story.id,
+                    blank_id=new_blank.id,
+                    position=pos_counter
+                )
+                db.session.add(new_story_blank)
+                db.session.commit()
+                pos_counter += 1
+            except ValueError as e:
+                db.session.rollback()
+                error = "Error during story-blank connection: " + e
+                raise ValueError(error)
+            if named:
+                dict_of_named_blanks.update({name: new_blank})
+                dict_of_story_blanks.update({name: new_story_blank})
+        else:
+            new_blank = dict_of_named_blanks[name]
+            new_story_blank = dict_of_story_blanks[name]
+
         # Replace blanks in story with story_blank id
         start = newStoryText.find(blank_start)
         end = newStoryText.find(blank_end)
@@ -155,7 +172,7 @@ def newStory():
 
         return redirect(url_for('play.home'))
     else:
-        return render_template('create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags)
+        return render_template('create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags, namedBlankTag=named_blank_tag, leftBracket=blank_start, rightBracket=blank_end)
 
 
 @create.route('/tag', methods=['GET', 'POST'])

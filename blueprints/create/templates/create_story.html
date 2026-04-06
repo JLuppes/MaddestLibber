@@ -48,6 +48,16 @@ Story{%endblock%} {% block content %}
               Add Blank
             </button>
           </div>
+
+          <div>
+          <p>Add a previously used named blank: </p>
+          <label for="namedList">Names:</label>
+          <select id="namedList" id="namedList">
+            <option value="">Previously Added Names</option>
+          </select>
+          <button onclick="handleNamedList(event)" class="form-control-sm">Add</button>
+          </div>
+
         </div>
       </div>
       <div class="row border border-secondary mb-3 pb-2">
@@ -98,30 +108,54 @@ Story{%endblock%} {% block content %}
   const namedBlankTag = {% if namedBlankTag %}"{{namedBlankTag}}"{% else %}"*"{% endif %};
   const leftBracket = {% if leftBracket %}"{{leftBracket}}"{% else %}`~[`{% endif %} ;
   const rightBracket = {% if rightBracket %}"{{rightBracket}}"{% else %}`]~`{% endif %} ;
+  const namedList = document.getElementById("namedList")
 
   function clearStory(event) {
     event.preventDefault();
 
     newStoryBox.value = "";
   }
+
   function handleBlank(event) {
     event.preventDefault();
+
+    // Get the info from the new blank fields
     const newName = newBlankName.value;
     const newHint = newBlankHint.value;
     const newNamed = newBlankNamed.checked;
 
-    const namedTag = newNamed === true ? namedBlankTag : "";
-    const secondHalf = newHint ? "|" + newHint : "";
+    // Add the blank to the story text
+    addBlank(newName, newHint, newNamed)
 
-    newStoryBox.value += `${leftBracket}${namedTag}${newName}${secondHalf}${rightBracket}`;
+    // If the blank is named, add it to the previously named list
+    if (newNamed){
+      const newNamedListElement = document.createElement('option')
+      newNamedListElement.value = newName
+      const namedListEntrySecondHalf = newHint ? ` | ${newHint}` : ''
+      newNamedListElement.innerText = `${newName}${namedListEntrySecondHalf}`
+      namedList.append(newNamedListElement)
+    }
 
+    // Reset the new blank fields
     newBlankName.value = "";
     newBlankHint.value = "";
     newBlankNamed.checked = false
   }
-</script>
 
-<script>
+  function handleNamedList(event){
+    event.preventDefault()
+    const nameToAdd = namedList.value
+    if (nameToAdd){
+      addBlank(namedList.value, "previously named", true)
+    }
+  }
+
+  function addBlank(name, hint, named){
+    const namedTag = named ? namedBlankTag : "";
+    const secondHalf = hint ? " | " + hint : "";
+    newStoryBox.value += `${leftBracket}${namedTag}${name}${secondHalf}${rightBracket}`;
+  }
+
   const storyTagList = document.getElementById("storyTagList");
   const addTagForm = document.getElementById("tagAdditionForm");
   const tagSelectionDropdown = document.getElementById("tags");

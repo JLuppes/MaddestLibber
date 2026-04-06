@@ -52,14 +52,15 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         error = f"Error adding story to database: {e}"
         raise ValueError(error)
 
-    set_of_named_blanks = dict()
+    dict_of_named_blanks = dict()
+    dict_of_story_blanks = dict()
     pos_counter = 0
     newStoryText = storyText
     for this_blank in blanks:
         name = this_blank[0]
         hint = this_blank[1]
         named = this_blank[2]
-        if not named or not name in set_of_named_blanks.keys():
+        if not named or not name in dict_of_named_blanks.keys():
             try:
                 new_blank = Blank(
                     name=name,
@@ -71,24 +72,26 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
                 db.session.rollback()
                 error = "Error adding new blank: " + e
                 flash(error, 'error')
-
+            try:
+                new_story_blank = Story_Blank(
+                    story_id=new_story.id,
+                    blank_id=new_blank.id,
+                    position=pos_counter
+                )
+                db.session.add(new_story_blank)
+                db.session.commit()
+                pos_counter += 1
+            except ValueError as e:
+                db.session.rollback()
+                error = "Error during story-blank connection: " + e
+                raise ValueError(error)
             if named:
-                set_of_named_blanks.update({name: new_blank})
+                dict_of_named_blanks.update({name: new_blank})
+                dict_of_story_blanks.update({name: new_story_blank})
         else:
-            new_blank = set_of_named_blanks[name]
-        try:
-            new_story_blank = Story_Blank(
-                story_id=new_story.id,
-                blank_id=new_blank.id,
-                position=pos_counter
-            )
-            db.session.add(new_story_blank)
-            db.session.commit()
-            pos_counter += 1
-        except ValueError as e:
-            db.session.rollback()
-            error = "Error during story-blank connection: " + e
-            raise ValueError(error)
+            new_blank = dict_of_named_blanks[name]
+            new_story_blank = dict_of_story_blanks[name]
+
         # Replace blanks in story with story_blank id
         start = newStoryText.find(blank_start)
         end = newStoryText.find(blank_end)

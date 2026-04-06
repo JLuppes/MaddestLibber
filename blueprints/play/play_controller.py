@@ -14,22 +14,20 @@ def home():
 @play.route('/respond', methods=['GET', 'POST'])
 def respond(storyId=''):
 
-    storyId = int(request.args.get('storyId', 28))
+    storyId = int(request.args.get('storyId'))
 
     story = Story.query.filter_by(id=storyId).first()
+
+    if story is None:
+        error = "No story id provided or story not found!"
+        flash(error, 'error')
+        return redirect(url_for('play.listStories'))
+
     story_name = story.name
     story_description = story.description
-    requestSet = Story_Blank.query.filter_by(story_id=storyId).all()
-    blanks = []
-    for thisRequest in requestSet:
-        thisBlank = Blank.query.filter_by(id=thisRequest.blank_id).first()
-        blanks.append(thisBlank)
-
-    if requestSet is None:
-        return redirect(url_for('play.home'), error="No requests found for that story!")
+    request_set = Story_Blank.query.filter_by(story_id=storyId).all()
 
     if request.method == 'POST':
-
         story_id = request.form.get('story_id')
         user = request.form.get('userName', 'Anonymous')
         title = request.form.get('responseTitle', 'Untitled')
@@ -53,10 +51,10 @@ def respond(storyId=''):
         responses = request.form.getlist('response')
 
         for i, response in enumerate(responses):
-            thisRequest = requestSet[i]
+            this_request = request_set[i]
             try:
                 newResponse = Response(
-                    story_blank_id=thisRequest.id,
+                    story_blank_id=this_request.id,
                     responseset_id=new_response_set.id,
                     text=response
                 )
@@ -69,7 +67,18 @@ def respond(storyId=''):
 
         return redirect(url_for('play.finishedStory', storyId=story_id, responseSetId=new_response_set.id))
 
-    return render_template('respond.html', storyName=story_name, storyDescription=story_description, requestSet=requestSet, storyId=story.id, enumerate=enumerate, blanks=blanks)
+    if request_set is None:
+        return redirect(url_for('play.home'), error="No requests found for that story!")
+
+    blanks = []
+    for this_request in request_set:
+        thisBlank = Blank.query.filter_by(
+            id=this_request.blank_id).order_by(Blank.id).first()
+        blanks.append(thisBlank)
+
+    # random.shuffle(blanks)
+
+    return render_template('respond.html', storyName=story_name, storyDescription=story_description, requestSet=request_set, storyId=story.id, enumerate=enumerate, blanks=blanks)
 
 
 @play.route('/list')

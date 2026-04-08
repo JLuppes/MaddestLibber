@@ -20,7 +20,7 @@ Make some improvosational stories!
 - Create your `.env` file
 
   ```bash
-  cp .env-sample .env
+  cp .env.example .env
   ```
 
 - Run the app

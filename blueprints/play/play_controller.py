@@ -1,14 +1,52 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import db, Story, Blank, Story_Blank, Tag, Story_Tag, ResponseSet, Response
+from models import db, Story, Tag, Story_Tag, ResponseSet, Response
 import random
 
 play = Blueprint('play', __name__, url_prefix='/play',
                  template_folder='./templates')
 
 
+blank_start = '~['
+blank_end = ']~'
+named_blank_tag = '*'
+sep_char = '|'
+replaced_start = '~+'
+replaced_end = '+~'
+
+
 @play.route('/')
 def home():
     return render_template('play_home.html')
+
+
+def getBlanks(text):
+    blanks = []
+    start = 0
+    blank_pos = 0
+    while True:
+        start = text.find(blank_start, start)
+        end = text.find(blank_end, start)
+        if start == -1:
+            break
+        blank_text = text[(start+len(blank_start)):end]
+        sep_pos = blank_text.find(sep_char)
+        blank_prompt = blank_text[:sep_pos].strip(
+        ) if sep_pos > -1 else blank_text[:end].strip()
+        blank_named = blank_prompt.startswith(named_blank_tag)
+        blank_prompt = blank_prompt.removeprefix(named_blank_tag)
+        blank_hint = blank_text[sep_pos +
+                                len(sep_char):].strip() if sep_pos > -1 else ''
+
+        previously_named = False
+        if blank_named:
+            for blank in blanks:
+                if blank[2] and blank[0] == blank_prompt:
+                    previously_named = True
+        if not blank_named or (blank_named and not previously_named):
+            blanks.append((blank_prompt, blank_hint, blank_named, blank_pos))
+        start += len(blank_start+blank_end+blank_text)
+        blank_pos += 1
+    return blanks
 
 
 @play.route('/respond', methods=['GET', 'POST'])
@@ -25,7 +63,6 @@ def respond(storyId=''):
 
     story_name = story.name
     story_description = story.description
-    request_set = Story_Blank.query.filter_by(story_id=storyId).all()
 
     if request.method == 'POST':
         story_id = request.form.get('story_id')
@@ -49,17 +86,24 @@ def respond(storyId=''):
             flash(error, 'error')
 
         responses = request.form.getlist('response')
+        response_prompts = request.form.getlist('response-prompt')
+        response_hints = request.form.getlist('response-hint')
+        response_nameds = request.form.getlist('response-named')
 
+        response_pos = 0
         for i, response in enumerate(responses):
-            this_request = request_set[i]
             try:
                 newResponse = Response(
-                    story_blank_id=this_request.id,
                     responseset_id=new_response_set.id,
-                    text=response
+                    text=response,
+                    named=response_nameds[i] == 'True',
+                    prompt=response_prompts[i],
+                    hint=response_hints[i],
+                    pos=response_pos
                 )
                 db.session.add(newResponse)
                 db.session.commit()
+                response_pos += 1
             except ValueError as e:
                 db.session.rollback()
                 error = "Error adding response: " + e
@@ -67,18 +111,9 @@ def respond(storyId=''):
 
         return redirect(url_for('play.finishedStory', storyId=story_id, responseSetId=new_response_set.id))
 
-    if request_set is None:
-        return redirect(url_for('play.home'), error="No requests found for that story!")
+    blanks = getBlanks(story.text)
 
-    blanks = []
-    for this_request in request_set:
-        thisBlank = Blank.query.filter_by(
-            id=this_request.blank_id).order_by(Blank.id).first()
-        blanks.append(thisBlank)
-
-    # random.shuffle(blanks)
-
-    return render_template('respond.html', storyName=story_name, storyDescription=story_description, requestSet=request_set, storyId=story.id, enumerate=enumerate, blanks=blanks)
+    return render_template('respond.html', storyName=story_name, storyDescription=story_description, storyId=story.id, enumerate=enumerate, blanks=blanks)
 
 
 @play.route('/list')
@@ -110,8 +145,7 @@ def getRandomStory():
 
 @play.route('/random')
 def randomStory():
-    thisStory = getRandomStory()
-    return redirect(url_for('play.respond', storyId=thisStory.id))
+    return redirect(url_for('play.respond', storyId=getRandomStory().id))
 
 
 @play.route('/read')
@@ -129,25 +163,19 @@ def finishedStory():
     responseSet = ResponseSet.query.filter_by(id=responseSetId).first()
     responses = Response.query.filter_by(responseset_id=responseSetId).all()
 
-    allStoryBlanks = Story_Blank.query.filter_by().all()
-    allBlanks = Blank.query.all()
-
     responseSetBlankInfo = []
     for response in responses:
-        story_blank = Story_Blank.query.filter_by(
-            id=response.story_blank_id).first()
-        blank = Blank.query.filter_by(id=story_blank.blank_id).first()
-        blank_name = blank.name
-        blank_hint = blank.hint
         responseSetBlankInfo.append(
             {
-                "story_blank_id": response.story_blank_id,
-                "blank_name": blank_name,
-                "blank_hint": blank_hint
+                "blank_text": response.text,
+                "blank_name": response.prompt,
+                "blank_hint": response.hint,
+                "blank_named": response.named,
+                "blank_pos": response.pos
             }
         )
 
-    return render_template('finishedStory.html', story=story, responseSet=responseSet, responses=responses, allStoryBlanks=allStoryBlanks, allBlanks=allBlanks, responseSetBlankInfo=responseSetBlankInfo)
+    return render_template('finishedStory.html', story=story, responseSet=responseSet, responses=responses, responseSetBlankInfo=responseSetBlankInfo)
 
 
 @play.route('/responses')

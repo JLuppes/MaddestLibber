@@ -9,54 +9,71 @@
             </div>
             <h5 class="card-title">Story:</h5>
             <h5 class="card-title">Title: {%if story.name%}{{story.name}}{%else%}N/A{%endif%}</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if story.description%}{{story.description}}{%else%}N/A{%endif%}</h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if
+                story.description%}{{story.description}}{%else%}N/A{%endif%}</h6>
             <h5 class="card-title">Response:</h5>
             <h5 class="card-title">Title: {{responseSet.title if responseSet.title else "N/A"}}</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if responseSet.description%}{{responseSet.description}}{%else%}N/A{%endif%}</h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Submitted By: {%if responseSet.user%}{{responseSet.user}}{%else%}N/A{%endif%}</h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Description: {%if
+                responseSet.description%}{{responseSet.description}}{%else%}N/A{%endif%}</h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Submitted By: {%if
+                responseSet.user%}{{responseSet.user}}{%else%}N/A{%endif%}</h6>
             <a href="{{url_for('play.randomStory')}}" class="card-link">Random Response</a>
             <a href="{{url_for('play.respond', storyId=story.id)}}" class="card-link">Submit Your Own</a>
         </div>
     </div>
 </div>
 
-
-
 {%endblock%}
 
 {% block scripts %}
 {{super()}}
 <script>
-    let responseList = [
-{% for thisResponse in responses %}
-    {% set story_blank_id = thisResponse['story_blank_id'] %}
-    {% for blank in responseSetBlankInfo %}
-        {% if blank['story_blank_id']==thisResponse['story_blank_id'] %}
-            {
-                'story_blank_id': {{ thisResponse.story_blank_id }},
-                'text': '{{ thisResponse.text }}',
-                'blank_name': '{{blank.blank_name}}',
-                'blank_hint': '{{blank.blank_hint}}'
-            },
-        {% endif %}
-    {% endfor %}
-{% endfor %}
-    ]
-    const replaceStart = "~+"
-    const replaceEnd = "+~"
+
+
+
+    const replaceStartChar = "~["
+    const replaceEndChar = "]~"
+    const sepChar = "|"
+    const namedTag = "*"
     let storyText = `{{story.text}}`
-    responseList.forEach((thisResponse) => {
-        const start = storyText.indexOf(replaceStart+thisResponse['story_blank_id'])
-        const replaced = storyText.slice(start+replaceStart.length, start+replaceStart.length+thisResponse['story_blank_id'].toString().length)
-        const sep = thisResponse.blank_hint ? " | " : ""
-        const blankText = `
+    const listOfBlankInfo = [
+    {% for thisResponse in responseSetBlankInfo %}
+        {
+        {% for thisProperty in thisResponse.keys() %}
+        "{{thisProperty}}": "{{thisResponse[thisProperty]}}",
+        {% endfor %}
+        },
+    {% endfor %}
+    ]
+    listOfBlankInfo.sort((resp) => Number(resp["blank_pos"])).forEach((thisResponse) => {
+        const startOfBlankPos = storyText.indexOf(replaceStartChar)
+        const nextSepCharPos = storyText.indexOf(sepChar, startOfBlankPos)
+        const endOfBlankPos = storyText.indexOf(replaceEndChar, startOfBlankPos)
+        const blankIsNamed = thisResponse['blank_named'] == "True"
+        let replaced = ""
+        if (nextSepCharPos === -1 || nextSepCharPos > endOfBlankPos) {
+            replaced = storyText.slice(startOfBlankPos + replaceStartChar.length, startOfBlankPos + replaceStartChar.length + thisResponse['blank_name'].toString().length)
+        }
+        else replaced = storyText.slice(startOfBlankPos + replaceStartChar.length, startOfBlankPos + replaceStartChar.length + thisResponse['blank_name'].toString().length + sepChar.length + thisResponse['blank_hint'].toString().length)
+        const sep = thisResponse.blank_hint ? ` ${sepChar} ` : ""
+        const blankTextEl = `
         <div class="filledBlank">
-            <strong>` + thisResponse['text'] + `</strong>
+            <strong>` + thisResponse['blank_text'] + `</strong>
             <span class="filledBlankHint">${thisResponse.blank_name}${sep}${thisResponse.blank_hint}</span>
         </div>`
-        const replaceable = replaceStart+thisResponse['story_blank_id'].toString()+replaceEnd;
-        while (storyText.includes(replaceable)){
-            storyText =storyText.replace(replaceable, blankText)
+        if (blankIsNamed) {
+            const replaceable = replaceStartChar + namedTag + thisResponse['blank_name'].toString();
+            while (storyText.includes(replaceable)) {
+                const repStart = storyText.indexOf(replaceable);
+                if (repStart == -1) break;
+                const repEnd = storyText.indexOf(replaceEndChar, repStart) + replaceEndChar.length;
+                if (repEnd == -1) break;
+                const tempReplaceable = storyText.slice(repStart, repEnd);
+                storyText = storyText.replace(tempReplaceable, blankTextEl);
+            }
+        } else {
+            const replaceable = replaceStartChar + thisResponse['blank_name'].toString() + sep + thisResponse['blank_hint'].toString() + replaceEndChar;
+            storyText = storyText.replace(replaceable, blankTextEl)
         }
 
     })
@@ -66,6 +83,5 @@
 
     const theStoryEl = document.getElementById('theStory')
     theStoryEl.innerHTML = txt.value;
-
 </script>
 {% endblock %}

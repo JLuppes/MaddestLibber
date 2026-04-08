@@ -16,20 +16,39 @@
           <div class="form-floating mt-4">
             <input
               class="form-control overflow-scroll"
-              aria-labelledby="response-label-{{thisRequest.id}} response-field-hint-label-{{thisRequest.id}}"
+              aria-labelledby="response-label-{{i}} response-field-hint-label-{{i}}"
               aria-label="Text response to prompt"
               name="response"
-              id="response-field-{{thisRequest.id}}"
+              id="response-field-{{i}}"
               type="text"
               required
             />
             <label
-              for="response-field-{{thisRequest.id}}"
+              for="response-field-{{i}}"
               class="form-label"
-              id="response-label-{{thisRequest.id}}"
+              id="response-label-{{i}}"
             >
-              Prompt: {{thisRequest.name}}. Hint: {{thisRequest.hint if
-              thisRequest.hint else "(none)"}}
+              <input
+                type="hidden"
+                id="response-prompt-{{i}}"
+                name="response-prompt"
+                value="{{thisRequest[0]}}"
+              />
+              <input
+                type="hidden"
+                id="response-hint-{{i}}"
+                name="response-hint"
+                value="{{thisRequest[1]}}"
+              />
+              <input
+                type="hidden"
+                id="response-named-{{i}}"
+                name="response-named"
+                value="{{thisRequest[2]}}"
+              />
+
+              Prompt: {{thisRequest[0]}}. Hint: {{thisRequest[1] if
+              thisRequest[1] else "(none)"}}
             </label>
           </div>
 

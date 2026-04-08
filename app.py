@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from models import db, Tag, Story_Tag, Story, Story_Blank, Response, ResponseSet, Blank
+from models import db, Tag, Story_Tag, Story, Response, ResponseSet
 from blueprints.main import main_controller
 from blueprints.create import create_controller
 from blueprints.play import play_controller
@@ -30,10 +30,8 @@ app.register_blueprint(play_controller.play)
 admin.add_view(ModelView(Tag, db.session))
 admin.add_view(ModelView(Story_Tag, db.session))
 admin.add_view(ModelView(Story, db.session))
-admin.add_view(ModelView(Story_Blank, db.session))
 admin.add_view(ModelView(Response, db.session))
 admin.add_view(ModelView(ResponseSet, db.session))
-admin.add_view(ModelView(Blank, db.session))
 
 if __name__ == '__main__':
     app.run(debug=True)

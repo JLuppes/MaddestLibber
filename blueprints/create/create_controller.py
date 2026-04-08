@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import db, Tag, Story, Story_Tag, Story_Blank, Blank
+from models import db, Tag, Story, Story_Tag
 from blueprints.create.create_forms import NewStoryForm, NewTagForm
 
 create = Blueprint('create', __name__, url_prefix='/create',
@@ -20,25 +20,6 @@ def home():
 
 def makeNewStory(storyName='', storyDescription='', storyText=''):
 
-    # blanks = []
-
-    # start = 0
-    # while True:
-    #     start = storyText.find(blank_start, start)
-    #     end = storyText.find(blank_end, start)
-    #     if start == -1:
-    #         break
-    #     blank_text = storyText[(start+len(blank_start)):end]
-    #     sep_pos = blank_text.find(sep_char)
-    #     blank_name = blank_text[:sep_pos].strip(
-    #     ) if sep_pos > -1 else blank_text[:end].strip()
-    #     named_blank = blank_name.startswith(named_blank_tag)
-    #     blank_name = blank_name.removeprefix(named_blank_tag)
-    #     blank_desc = blank_text[sep_pos +
-    #                             len(sep_char):].strip() if sep_pos > -1 else ''
-    #     blanks.append((blank_name, blank_desc, named_blank))
-    #     start += len(blank_start+blank_end+blank_text)
-
     try:
         new_story = Story(
             name=storyName,
@@ -51,62 +32,6 @@ def makeNewStory(storyName='', storyDescription='', storyText=''):
         db.session.rollback()
         error = f"Error adding story to database: {e}"
         raise ValueError(error)
-
-    # dict_of_named_blanks = dict()
-    # dict_of_story_blanks = dict()
-    # pos_counter = 0
-    # newStoryText = storyText
-    # for this_blank in blanks:
-    #     name = this_blank[0]
-    #     hint = this_blank[1]
-    #     named = this_blank[2]
-    #     if not named or not name in dict_of_named_blanks.keys():
-    #         try:
-    #             new_blank = Blank(
-    #                 name=name,
-    #                 hint=hint
-    #             )
-    #             db.session.add(new_blank)
-    #             db.session.commit()
-    #         except ValueError as e:
-    #             db.session.rollback()
-    #             error = "Error adding new blank: " + e
-    #             flash(error, 'error')
-    #         try:
-    #             new_story_blank = Story_Blank(
-    #                 story_id=new_story.id,
-    #                 blank_id=new_blank.id,
-    #                 position=pos_counter
-    #             )
-    #             db.session.add(new_story_blank)
-    #             db.session.commit()
-    #             pos_counter += 1
-    #         except ValueError as e:
-    #             db.session.rollback()
-    #             error = "Error during story-blank connection: " + e
-    #             raise ValueError(error)
-    #         if named:
-    #             dict_of_named_blanks.update({name: new_blank})
-    #             dict_of_story_blanks.update({name: new_story_blank})
-    #     else:
-    #         new_blank = dict_of_named_blanks[name]
-    #         new_story_blank = dict_of_story_blanks[name]
-
-    #     # Replace blanks in story with story_blank id
-    #     start = newStoryText.find(blank_start)
-    #     end = newStoryText.find(blank_end)
-
-    #     replacement = replaced_start + str(new_story_blank.id) + replaced_end
-    #     newStoryText = newStoryText[:start] + \
-    #         replacement + newStoryText[end+len(blank_end):]
-
-    # # Replace existing story text with our updated version
-    # try:
-    #     new_story.text = newStoryText
-    #     db.session.commit()
-    # except ValueError as e:
-    #     error = "Error replacing story text: " + e
-    #     flash(error, 'error')
 
     return new_story
 

@@ -9,3 +9,5 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, formed_dbname)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
+    HOST_ADDR = os.getenv('HOST_ADDR', '0.0.0.0')
+    HOST_PORT = os.getenv('HOST_PORT', 5000)

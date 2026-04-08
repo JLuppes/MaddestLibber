@@ -7,12 +7,15 @@ from blueprints.play import play_controller
 from dotenv import load_dotenv
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_migrate import Migrate
 load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 app.secret_key = app.config['SECRET_KEY']
+
+migrate = Migrate(app, db)
 
 admin = Admin(app, name='MaddestLibber Admin')
 

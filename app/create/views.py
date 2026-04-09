@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import db, Tag, Story, Story_Tag
-from blueprints.create.create_forms import NewStoryForm, NewTagForm
+from flask import render_template, request, redirect, url_for, flash
+from app.models import db, Tag, Story, Story_Tag
+from app.create.forms import NewStoryForm, NewTagForm
 
-create = Blueprint('create', __name__, url_prefix='/create',
-                   template_folder='./templates')
+from . import create_blueprint
 
 blank_start = '~['
 blank_end = ']~'
@@ -13,9 +12,9 @@ replaced_start = '~+'
 replaced_end = '+~'
 
 
-@create.route('/')
+@create_blueprint.route('/')
 def home():
-    return render_template('create_home.html')
+    return render_template('create/create_home.html')
 
 
 def makeNewStory(storyName='', storyDescription='', storyText=''):
@@ -68,7 +67,7 @@ def makeStoryTagConnection(story, tag):
         raise ValueError(error)
 
 
-@create.route('/story', methods=['GET', 'POST'])
+@create_blueprint.route('/story', methods=['GET', 'POST'])
 def newStory():
     newStoryForm = NewStoryForm()
     newTagForm = NewTagForm()
@@ -97,10 +96,10 @@ def newStory():
 
         return redirect(url_for('play.home'))
     else:
-        return render_template('create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags, namedBlankTag=named_blank_tag, leftBracket=blank_start, rightBracket=blank_end)
+        return render_template('create/create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags, namedBlankTag=named_blank_tag, leftBracket=blank_start, rightBracket=blank_end)
 
 
-@create.route('/tag', methods=['GET', 'POST'])
+@create_blueprint.route('/tag', methods=['GET', 'POST'])
 def newTag():
     newTagForm = NewTagForm()
     if newTagForm.validate_on_submit():
@@ -112,8 +111,8 @@ def newTag():
             return redirect(url_for('create.newTag', newTagForm=newTagForm))
         except ValueError as e:
             error = "Error with new tag form!"
-            return render_template('create_tag.html', newTagForm=newTagForm, error=error)
+            return render_template('create/create_tag.html', newTagForm=newTagForm, error=error)
     elif newTagForm.is_submitted():
         error = "Form Validation Failed!"
-        return render_template('create_tag.html', newTagForm=newTagForm, error=error)
-    return render_template('create_tag.html', newTagForm=newTagForm)
+        return render_template('create/create_tag.html', newTagForm=newTagForm, error=error)
+    return render_template('create/create_tag.html', newTagForm=newTagForm)

@@ -1,4 +1,9 @@
+#!/usr/bin/env python
+
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Get the base directory for the application
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -24,10 +29,28 @@ host_addr = os.environ.get('HOST_ADDR', '0.0.0.0')
 host_port = os.environ.get('HOST_PORT', 5000)
 
 
-class Config:
+class Config(object):
+    """
+    Base configuration class. Contains default configuration settings + configuration settings applicable to all environments.
+    """
     DB_NAME = formed_dbname
     SQLALCHEMY_DATABASE_URI = db_uri
     SQLALCHEMY_TRACK_MODIFICATIONS = track_modifications
     SECRET_KEY = secret_key
     HOST_ADDR = host_addr
     FLASK_RUN_PORT = host_port
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, 'dev.db')
+
+class TestingConfig(Config):
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+    MAIL_SUPPRESS_SEND = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, 'test.db')
+
+class ProductionConfig(Config):
+    FLASK_ENV = 'production'
+    # Postgres database URL has the form postgresql://username:password@hostname/database
+    SQLALCHEMY_DATABASE_URI = os.getenv('PROD_DATABASE_URl', default="sqlite:///" + os.path.join(basedir, 'prod.db'))

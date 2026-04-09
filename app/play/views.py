@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import db, Story, Tag, Story_Tag, ResponseSet, Response
+from flask import render_template, request, redirect, url_for, flash
+from app.models import db, Story, Tag, Story_Tag, ResponseSet, Response
 import random
 
-play = Blueprint('play', __name__, url_prefix='/play',
-                 template_folder='./templates')
+from . import play_blueprint
 
 
 blank_start = '~['
@@ -14,9 +13,9 @@ replaced_start = '~+'
 replaced_end = '+~'
 
 
-@play.route('/')
+@play_blueprint.route('/')
 def home():
-    return render_template('play_home.html')
+    return render_template('play/play_home.html')
 
 
 def getBlanks(text):
@@ -49,7 +48,7 @@ def getBlanks(text):
     return blanks
 
 
-@play.route('/respond', methods=['GET', 'POST'])
+@play_blueprint.route('/respond', methods=['GET', 'POST'])
 def respond(storyId=''):
 
     storyId = int(request.args.get('storyId'))
@@ -113,10 +112,10 @@ def respond(storyId=''):
 
     blanks = getBlanks(story.text)
 
-    return render_template('respond.html', storyName=story_name, storyDescription=story_description, storyId=story.id, enumerate=enumerate, blanks=blanks)
+    return render_template('play/respond.html', storyName=story_name, storyDescription=story_description, storyId=story.id, enumerate=enumerate, blanks=blanks)
 
 
-@play.route('/list')
+@play_blueprint.route('/list')
 def listStories():
 
     stories = Story.query.all()
@@ -134,7 +133,7 @@ def listStories():
 
         story_list.append((thisStory, tagList))
 
-    return render_template('list_stories.html', stories=story_list)
+    return render_template('play/list_stories.html', stories=story_list)
 
 
 def getRandomStory():
@@ -143,12 +142,12 @@ def getRandomStory():
     return randomStory
 
 
-@play.route('/random')
+@play_blueprint.route('/random')
 def randomStory():
     return redirect(url_for('play.respond', storyId=getRandomStory().id))
 
 
-@play.route('/read')
+@play_blueprint.route('/read')
 def finishedStory():
 
     storyId = request.args.get('storyId', default=-1, type=int)
@@ -175,16 +174,16 @@ def finishedStory():
             }
         )
 
-    return render_template('finishedStory.html', story=story, responseSet=responseSet, responses=responses, responseSetBlankInfo=responseSetBlankInfo)
+    return render_template('play/finishedStory.html', story=story, responseSet=responseSet, responses=responses, responseSetBlankInfo=responseSetBlankInfo)
 
 
-@play.route('/responses')
+@play_blueprint.route('/responses')
 def listResponses():
 
     storyList = Story.query.all()
     responseSetList = ResponseSet.query.all()
 
-    return render_template('list_responses.html', storyList=storyList, responseSetList=responseSetList)
+    return render_template('play/list_responses.html', storyList=storyList, responseSetList=responseSetList)
 
 
 def getRandomResponse():
@@ -194,7 +193,7 @@ def getRandomResponse():
     return randomResponseSet
 
 
-@play.route('/read/random')
+@play_blueprint.route('/read/random')
 def readRandomResponse():
     thisResponseSet = getRandomResponse()
 

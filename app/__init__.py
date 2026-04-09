@@ -7,9 +7,12 @@ from config import Config
 import logging
 from flask.logging import default_handler
 from logging.handlers import RotatingFileHandler
+from celery import Celery
 
 admin = Admin()
 migrate = Migrate()
+celery = Celery(__name__, broker=Config.CELERY_BROKER_URL,
+                result_backend=Config.RESULT_BACKEND)
 
 
 def create_app():
@@ -18,6 +21,9 @@ def create_app():
     # Configure the flask app instance
     CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')
     app.config.from_object(CONFIG_TYPE)
+
+    # Configure celery
+    celery.conf.update(app.config)
 
     register_blueprints(app)
 

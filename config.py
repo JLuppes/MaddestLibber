@@ -39,6 +39,8 @@ class Config(object):
     SECRET_KEY = secret_key
     HOST_ADDR = host_addr
     FLASK_RUN_PORT = host_port
+    CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+    RESULT_BACKEND = os.getenv('RESULT_BACKEND')
 
 class DevelopmentConfig(Config):
     DEBUG = True

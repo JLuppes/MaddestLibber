@@ -46,6 +46,16 @@ To develop your own version of this project, you can `clone` or `fork` this repo
 
 `flask db upgrade`
 
+## Celery Worker
+
+A celery worker is set up and configured for running asynchronous tasks. This will be used in the future for email registration, etc., but for now is not used.
+
+To stand up the celery worker:
+
+- Configure a Redis instance (Docker container on local machine with port 6374 is used here)
+- Install redis and celery via pip `pip install redis celery`
+- Launch the celery worker `celery -A celery_worker.celery worker --pool=solo --loglevel=info`
+
 ## Credits
 
 - [Flask](https://flask.palletsprojects.com/en/stable/)

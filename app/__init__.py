@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
@@ -71,7 +71,31 @@ def configure_admin_pages(app):
 
 
 def register_error_handlers(app):
-    pass
+
+    # 400 - Bad Request
+    @app.errorhandler(400)
+    def bad_request(e):
+        return render_template('400.html'), 400
+
+    # 403 - Forbidden
+    @app.errorhandler(403)
+    def forbidden(e):
+        return render_template('403.html'), 403
+
+    # 404 - Page Not Found
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+
+    # 405 - Method Not Allowed
+    @app.errorhandler(405)
+    def method_not_allowed(e):
+        return render_template('405.html'), 405
+
+    # 500 - Internal Server Error
+    @app.errorhandler(500)
+    def server_error(e):
+        return render_template('500.html'), 500
 
 
 def configure_logging(app):
@@ -80,13 +104,15 @@ def configure_logging(app):
     app.logger.removeHandler(default_handler)
 
     # Create a file handler object
-    file_handler = RotatingFileHandler('instance/flaskapp.log', maxBytes=16384, backupCount=20)
+    file_handler = RotatingFileHandler(
+        'instance/flaskapp.log', maxBytes=16384, backupCount=20)
 
     # Set the logging level of the file handler object so that it logs INFO and up
     file_handler.setLevel(logging.INFO)
 
     # Create a file formatter object
-    file_formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(filename)s: %(lineno)d]')
+    file_formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(filename)s: %(lineno)d]')
 
     # Apply the file formatter object to the file handler object
     file_handler.setFormatter(file_formatter)

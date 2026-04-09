@@ -15,7 +15,7 @@ app.config.from_object(Config)
 
 app.secret_key = app.config['SECRET_KEY']
 host_addr = app.config['HOST_ADDR']
-host_port = app.config['HOST_PORT']
+host_port = app.config['FLASK_RUN_PORT']
 
 migrate = Migrate(app, db)
 

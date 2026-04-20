@@ -8,11 +8,13 @@ import logging
 from flask.logging import default_handler
 from logging.handlers import RotatingFileHandler
 from celery import Celery
+from flask_lucide import Lucide
 
 admin = Admin()
 migrate = Migrate()
 celery = Celery(__name__, broker=Config.CELERY_BROKER_URL,
                 result_backend=Config.RESULT_BACKEND)
+lucide = Lucide(None)
 
 
 def create_app():
@@ -58,6 +60,9 @@ def initialize_extensions(app):
 
     admin.init_app(app)
     admin.name = "Maddest Libber Admin"
+
+    lucide.init_app(app)
+
     configure_admin_pages(app)
 
 

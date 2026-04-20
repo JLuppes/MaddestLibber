@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from app.models import db, Tag, Story, Story_Tag
-from app.create.forms import NewStoryForm, NewTagForm
+from app.create.forms import NewStoryForm, NewTagForm, NewBlankForm
 
 from . import create_blueprint
 
@@ -71,6 +71,7 @@ def makeStoryTagConnection(story, tag):
 def newStory():
     newStoryForm = NewStoryForm()
     newTagForm = NewTagForm()
+    newBlankForm = NewBlankForm()
     tags = Tag.query.all()
 
     if newStoryForm.validate_on_submit():
@@ -96,7 +97,7 @@ def newStory():
 
         return redirect(url_for('play.home'))
     else:
-        return render_template('create/create_story.html', newStoryForm=newStoryForm, newTagForm=newTagForm, tags=tags, namedBlankTag=named_blank_tag, leftBracket=blank_start, rightBracket=blank_end)
+        return render_template('create/create_story.html', newStoryForm=newStoryForm, newBlankForm=newBlankForm, newTagForm=newTagForm, tags=tags, namedBlankTag=named_blank_tag, leftBracket=blank_start, rightBracket=blank_end)
 
 
 @create_blueprint.route('/tag', methods=['GET', 'POST'])

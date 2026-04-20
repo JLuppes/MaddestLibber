@@ -14,48 +14,57 @@ Story{%endblock%} {% block content %}
 <div class="row justify-content-center">
   <div class="col-8">
     <form method="POST" action="{{url_for('create.newStory')}}">
-      {{ newStoryForm.csrf_token }}
+      {{newStoryForm.csrf_token}}
 
       <div class="row border border-secondary mb-3 pb-2">
         <div class="gy-3">
-          {{ newStoryForm.name.label(class="form-label") }}:
-          {{newStoryForm.name(size=20, class="form-control") }}
+          {{newStoryForm.name.label(class="form-label")}}:
+          {{newStoryForm.name(size=20, class="form-control")}}
           <br />
-          {{ newStoryForm.description.label(class="form-label") }}: {{
-          newStoryForm.description(size=20, class="form-control") }}
+          {{newStoryForm.description.label(class="form-label")}}:
+          {{newStoryForm.description(size=20, class="form-control")}}
         </div>
       </div>
 
       <div class="row border border-secondary mb-3 pb-2">
         <div class="gy-3">
-          {{ newStoryForm.text.label(class="form-label")}}:
+          {{newStoryForm.text.label(class="form-label")}}:
           {{newStoryForm.text(id="story-text-box", rows=8,
           class="form-control")}}
+          <br>
           <button class="form-control-sm" onclick="clearStory(event)">
             Clear
           </button>
+          <br>
+          <br>
+          <div class="border border-secondary">
+            <p>Insert a blank:</p>
+            <div class="gy-3">
 
-          <p>Insert a blank:</p>
-          <div>
-            <label for="newBlankName">Prompt</label>
-            <input type="text" name="newBlankName" id="newBlankName" />
-            <label for="newBlankHint">Hint</label>
-            <input type="text" name="newBlankHint" id="newBlankHint" />
-            <label for="newBlankNamed">Named Blank?</label>
-            <input type="checkbox" name="newBlankNamed" id="newBlankNamed" />
+              {{newBlankForm.prompt.label(class="form-label")}}
+              {{newBlankForm.prompt(class="form-control", id="newBlankName")}}
 
-            <button onclick="handleBlank(event)" class="form-control-sm">
-              Add Blank
-            </button>
+              {{newBlankForm.hint.label(class="form-label")}}
+              {{newBlankForm.hint(class="form-control", id="newBlankHint")}}
+
+              {{newBlankForm.named.label(class="form-label")}}
+              {{newBlankForm.named(id='newBlankNamed')}}
+
+              <button onclick="handleBlank(event)" class="form-control-sm">
+                Add Blank
+              </button>
+
+            </div>
+
           </div>
-
-          <div>
-          <p>Add a previously used named blank: </p>
-          <label for="namedList">Names:</label>
-          <select id="namedList" id="namedList">
-            <option value="">Previously Added Names</option>
-          </select>
-          <button onclick="handleNamedList(event)" class="form-control-sm">Add</button>
+          <br>
+          <div class="border border-secondary">
+            <p>Add a previously used named blank: </p>
+            <label for="namedList">Names:</label>
+            <select id="namedList" id="namedList">
+              <option value="">Previously Added Names</option>
+            </select>
+            <button onclick="handleNamedList(event)" class="form-control-sm">Add</button>
           </div>
 
         </div>
@@ -69,12 +78,7 @@ Story{%endblock%} {% block content %}
         </div>
       </div>
 
-      <input
-        class="form-control-sm"
-        class="submit"
-        type="submit"
-        value="Submit Story"
-      />
+      <input class="form-control-sm" class="submit" type="submit" value="Submit Story" />
     </form>
   </div>
   <div class="col-4">
@@ -90,12 +94,7 @@ Story{%endblock%} {% block content %}
         {% endfor %}
       </select>
       <br />
-      <input
-        class="form-control-sm"
-        type="submit"
-        onclick="handleNewTagForm(event)"
-        value="Add Tag"
-      />
+      <input class="form-control-sm" type="submit" onclick="handleNewTagForm(event)" value="Add Tag" />
     </form>
   </div>
 </div>
@@ -105,9 +104,9 @@ Story{%endblock%} {% block content %}
   const newBlankHint = document.getElementById("newBlankHint");
   const newBlankNamed = document.getElementById("newBlankNamed");
   const newStoryBox = document.getElementById("story-text-box");
-  const namedBlankTag = {% if namedBlankTag %}"{{namedBlankTag}}"{% else %}"*"{% endif %};
-  const leftBracket = {% if leftBracket %}"{{leftBracket}}"{% else %}`~[`{% endif %} ;
-  const rightBracket = {% if rightBracket %}"{{rightBracket}}"{% else %}`]~`{% endif %} ;
+  const namedBlankTag = {% if namedBlankTag %}"{{namedBlankTag}}"{% else %} "*"{% endif %};
+  const leftBracket = {% if leftBracket %}"{{leftBracket}}"{% else %} `~[`{% endif %};
+  const rightBracket = {% if rightBracket %}"{{rightBracket}}"{% else %} `]~`{% endif %};
   const namedList = document.getElementById("namedList")
 
   function clearStory(event) {
@@ -128,7 +127,7 @@ Story{%endblock%} {% block content %}
     addBlank(newName, newHint, newNamed)
 
     // If the blank is named, add it to the previously named list
-    if (newNamed){
+    if (newNamed) {
       const newNamedListElement = document.createElement('option')
       newNamedListElement.value = newName
       const namedListEntrySecondHalf = newHint ? ` | ${newHint}` : ''
@@ -142,15 +141,15 @@ Story{%endblock%} {% block content %}
     newBlankNamed.checked = false
   }
 
-  function handleNamedList(event){
+  function handleNamedList(event) {
     event.preventDefault()
     const nameToAdd = namedList.value
-    if (nameToAdd){
+    if (nameToAdd) {
       addBlank(namedList.value, "previously named", true)
     }
   }
 
-  function addBlank(name, hint, named){
+  function addBlank(name, hint, named) {
     const namedTag = named ? namedBlankTag : "";
     const secondHalf = hint ? " | " + hint : "";
     newStoryBox.value += `${leftBracket}${namedTag}${name}${secondHalf}${rightBracket}`;

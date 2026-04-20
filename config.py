@@ -9,11 +9,11 @@ load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Pull the db name from the .env file if specified
-imported_dbname = os.environ.get('DB_NAME', 'maddestlibber.db')
+imported_dbname = os.environ.get('DB_NAME', '')
 
 # Add the filetype extension to the database name
 formed_dbname = imported_dbname if imported_dbname.endswith(
-    '.db') else imported_dbname + '.db'
+    '.db') else imported_dbname + '.db' if imported_dbname else ''
 
 # Tell SQLAlchemy to track modifications
 track_modifications = os.environ.get('DB_TRACK_MODIFICATIONS', False) == "True"
